@@ -1,0 +1,15 @@
+*.exe
+*.out
+*.o
+
+vgcore.*
+
+*/main
+
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.gz
+
+.vscode
