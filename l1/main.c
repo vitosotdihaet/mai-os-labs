@@ -8,16 +8,13 @@
 
 
 int main() {
-    string s;
-    init_string(&s);
-
     string filename1;
     printf("Input a filename in which you want to write output of child1: ");
-    read_string(&filename1);
+    string_read(&filename1);
 
     string filename2;
     printf("Input a filename in which you want to write output of child2: ");
-    read_string(&filename2);
+    string_read(&filename2);
 
     int p1[2];
     pipe(p1);
@@ -40,13 +37,14 @@ int main() {
             close(p2[0]);
             close(p1[0]);
 
-            sleep(1);
+            string s;
+            string_init(&s);
 
-            printf("Input a string: ");
-            while (!read_string(&s)) {
+            // sleep(1);
+            printf("Input strings [CTRL+D TO EXIT]:\n");
+            while (!string_read(&s)) {
                 uint64_t l = string_len(s);
-                printf("Gotten string = %s, with length of %ld\n", s.values, l);
-                push_char(&s, '\n');
+                string_push_char(&s, '\n');
 
                 if (l > 10) {
                     write(p2[1], s.values, l + 1);
@@ -54,18 +52,20 @@ int main() {
                     write(p1[1], s.values, l + 1);
                 }
 
-                printf("Input a string: ");
+                // printf("Input a string: ");
             }
 
             close(p2[1]);
             close(p1[1]);
         } else { // child2
+            close(p2[1]);
             dup2(p2[0], STDIN_FILENO);
 
             char *argv[] = { "processor.out", filename2.values, NULL };
             execv(argv[0], argv);
         }
     } else { // child1
+        close(p1[1]);
         dup2(p1[0], STDIN_FILENO);
 
         char *argv[] = { "processor.out", filename1.values, NULL };
