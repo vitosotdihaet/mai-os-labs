@@ -14,4 +14,4 @@ vgcore.*
 
 .vscode
 
-/l1/*.txt
+*/temp
