@@ -13,3 +13,5 @@ vgcore.*
 *.gz
 
 .vscode
+
+l1/*.txt
