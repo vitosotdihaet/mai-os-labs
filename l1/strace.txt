@@ -1,0 +1,67 @@
+execve("./main.out", ["./main.out"], 0x7fff13ad4630 /* 44 vars */) = 0
+brk(NULL)                               = 0x55c551c62000
+arch_prctl(0x3001 /* ARCH_??? */, 0x7ffdf7c8bbb0) = -1 EINVAL (Invalid argument)
+mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f69d329e000
+access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
+newfstatat(3, "", {st_mode=S_IFREG|0644, st_size=35491, ...}, AT_EMPTY_PATH) = 0
+mmap(NULL, 35491, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f69d3295000
+close(3)                                = 0
+openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
+read(3, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0P\237\2\0\0\0\0\0"..., 832) = 832
+pread64(3, "\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0"..., 784, 64) = 784
+pread64(3, "\4\0\0\0 \0\0\0\5\0\0\0GNU\0\2\0\0\300\4\0\0\0\3\0\0\0\0\0\0\0"..., 48, 848) = 48
+pread64(3, "\4\0\0\0\24\0\0\0\3\0\0\0GNU\0i8\235HZ\227\223\333\350s\360\352,\223\340."..., 68, 896) = 68
+newfstatat(3, "", {st_mode=S_IFREG|0644, st_size=2216304, ...}, AT_EMPTY_PATH) = 0
+pread64(3, "\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0"..., 784, 64) = 784
+mmap(NULL, 2260560, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7f69d306d000
+mmap(0x7f69d3095000, 1658880, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x28000) = 0x7f69d3095000
+mmap(0x7f69d322a000, 360448, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1bd000) = 0x7f69d322a000
+mmap(0x7f69d3282000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x214000) = 0x7f69d3282000
+mmap(0x7f69d3288000, 52816, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7f69d3288000
+close(3)                                = 0
+mmap(NULL, 12288, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f69d306a000
+arch_prctl(ARCH_SET_FS, 0x7f69d306a740) = 0
+set_tid_address(0x7f69d306aa10)         = 370
+set_robust_list(0x7f69d306aa20, 24)     = 0
+rseq(0x7f69d306b0e0, 0x20, 0, 0x53053053) = 0
+mprotect(0x7f69d3282000, 16384, PROT_READ) = 0
+mprotect(0x55c550fd8000, 4096, PROT_READ) = 0
+mprotect(0x7f69d32d8000, 8192, PROT_READ) = 0
+prlimit64(0, RLIMIT_STACK, NULL, {rlim_cur=8192*1024, rlim_max=RLIM64_INFINITY}) = 0
+munmap(0x7f69d3295000, 35491)           = 0
+newfstatat(1, "", {st_mode=S_IFCHR|0620, st_rdev=makedev(0x88, 0), ...}, AT_EMPTY_PATH) = 0
+getrandom("\x2e\x9a\x36\xf2\x2a\x4d\x8b\x81", 8, GRND_NONBLOCK) = 8
+brk(NULL)                               = 0x55c551c62000
+brk(0x55c551c83000)                     = 0x55c551c83000
+newfstatat(0, "", {st_mode=S_IFCHR|0620, st_rdev=makedev(0x88, 0), ...}, AT_EMPTY_PATH) = 0
+write(1, "Input a filename in which you wa"..., 62) = 62
+read(0, "temp/c1.txt\n", 1024)          = 12
+write(1, "Input a filename in which you wa"..., 62) = 62
+read(0, "temp/c2.txt\n", 1024)          = 12
+pipe2([3, 4], 0)                        = 0
+clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f69d306aa10) = 371
+pipe2([5, 6], 0)                        = 0
+clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f69d306aa10) = 372
+close(5)                                = 0
+close(3)                                = 0
+write(1, "Input strings [CTRL+D TO EXIT]:\n", 32) = 32
+read(0, "helloworld\n", 1024)           = 11
+write(4, "helloworld\n", 11)            = 11
+read(0, "helloworldverylongstring\n", 1024) = 25
+write(6, "helloworldverylongstring\n", 25) = 25
+read(0, "short\n", 1024)                = 6
+write(4, "short\n", 6)                  = 6
+read(0, "ababaoaoaoab\n", 1024)         = 13
+write(6, "ababaoaoaoab\n", 13)          = 13
+read(0, "ooooooooooeeeeeeeaaaaaaa\n", 1024) = 25
+write(6, "ooooooooooeeeeeeeaaaaaaa\n", 25) = 25
+read(0, "oiaeu\n", 1024)                = 6
+write(4, "oiaeu\n", 6)                  = 6
+read(0, "okbye\n", 1024)                = 6
+write(4, "okbye\n", 6)                  = 6
+read(0, "", 1024)                       = 0
+close(6)                                = 0
+close(4)                                = 0
+exit_group(0)                           = ?
++++ exited with 0 +++
