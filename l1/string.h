@@ -31,7 +31,7 @@ int string_copy(string* s1, string s2);
 // Fully changes parameters of s1 to s2
 int string_set(string* s1, string s2);
 
-// Reads string char by char returning -1 if EOF
+// Reads string char by char returning EOF if EOF
 int string_read(string* s);
 
 // Returns index of char if present, else -1
@@ -42,5 +42,8 @@ int string_contains(string s1, char c);
 
 // Returns length of a string
 uint32_t string_len(string s);
+
+// Returns element at ith position if it exists, else EOF
+int string_at(string s, uint32_t i);
 
 #endif

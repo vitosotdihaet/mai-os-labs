@@ -14,7 +14,7 @@ string remove_vowels(string s) {
     uint64_t l = string_len(s);
 
     for (uint64_t i = 0; i < l; ++i) {
-        char curr = s.values[i];
+        char curr = (char) string_at(s, i);
         if (!(curr == 'a' || curr == 'e' || curr == 'i' || curr == 'o' || curr == 'u')) {
             string_push_char(&new_s, curr);
         }
