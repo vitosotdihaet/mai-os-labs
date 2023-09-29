@@ -25,13 +25,6 @@ string remove_vowels(string s) {
 
 
 int main(int argc, char *argv[]) {
-    // printf("Hello from processor\n");
-    // printf("I have %d args:\n", argc);
-
-    // for (int i = 0; i < argc; ++i) {
-    //     printf("\t%s\n", argv[i]);
-    // }
-
     if (argc < 2) {
         printf("Not enough arguments!");
         exit(1);

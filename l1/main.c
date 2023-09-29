@@ -40,7 +40,6 @@ int main() {
             string s;
             string_init(&s);
 
-            // sleep(1);
             printf("Input strings [CTRL+D TO EXIT]:\n");
             while (!string_read(&s)) {
                 uint64_t l = string_len(s);
@@ -51,8 +50,6 @@ int main() {
                 } else {
                     write(p1[1], s.values, l + 1);
                 }
-
-                // printf("Input a string: ");
             }
 
             close(p2[1]);
