@@ -10,3 +10,6 @@ processor: string.o
 
 string:
 	$(CC) $(CFLAGS) -c string.c
+
+clear:
+	rm -f *.o *.out *.txt
