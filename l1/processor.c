@@ -1,9 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <sys/types.h>
-#include <unistd.h>
-
 #include "string.h"
 
 
@@ -41,7 +38,6 @@ int main(int argc, char *argv[]) {
     while (!string_read(&s)) {
         string processed = remove_vowels(s);
 
-        // printf("[DBUG] string in processor: %s\n", s.values);
         printf("String after removing vowels: %s\n", processed.values);
 
         fprintf(out, "%s\n", processed.values);
