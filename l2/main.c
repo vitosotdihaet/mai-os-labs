@@ -19,6 +19,9 @@ void *solve(void *args) {
     int *indexes = (int*) args;
     int left_index = indexes[0], right_index = indexes[1];
 
+    coordinate curr_max[3];
+    double curr_max_s = 0;
+
     double current_s = 0;
 
     for (int i = left_index; i < right_index; ++i) {
@@ -29,16 +32,24 @@ void *solve(void *args) {
 
         current_s = 0.5 * abs((x2 - x1) * (y3 - y1) - (x3 - x1) * (y2 - y1));
 
-        pthread_mutex_lock(&mutex);
-        if (current_s > max_s) {
-            max_s = current_s;
-            max_coords[0] = a;
-            max_coords[1] = b;
-            max_coords[2] = c;
+        if (current_s > curr_max_s) {
+            curr_max_s = current_s;
+            curr_max[0] = a;
+            curr_max[1] = b;
+            curr_max[2] = c;
         }
-        pthread_mutex_unlock(&mutex);
     }
 
+    pthread_mutex_lock(&mutex);
+    if (curr_max_s > max_s) {
+        max_s = curr_max_s;
+        max_coords[0] = curr_max[0];
+        max_coords[1] = curr_max[1];
+        max_coords[2] = curr_max[2];
+    }
+    pthread_mutex_unlock(&mutex);
+
+    free(args);
     return NULL;
 }
 
@@ -76,7 +87,7 @@ int main(int argc, char *argv[]) {
 
     clock_t time = clock();
     for (int i = 0; i < threads_num; ++i) {
-        int arg[2];
+        int *arg = calloc(2, sizeof(int));
         arg[0] = index_delta * i;
         arg[1] = index_delta * (i + 1);
 
@@ -84,7 +95,7 @@ int main(int argc, char *argv[]) {
         if (arg[1] > count) arg[1] = count;
         // printf("i = %d\n", i);
 
-        int ce = pthread_create(&thread_id, NULL, solve, &arg);
+        int ce = pthread_create(&thread_id, NULL, solve, arg);
         if (ce) {
             printf("Couldn't create thread %ld\n", thread_id);
             exit(ce);
