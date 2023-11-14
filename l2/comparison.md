@@ -1,5 +1,7 @@
 # Comparison of effectiveness
 
+Comparison plots are present in pngs
+
 ## 3 million coordinates (1 million of three points)
 ### Python
 ```

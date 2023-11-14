@@ -13,5 +13,6 @@ vgcore.*
 *.gz
 
 .vscode
+.*env
 
 */temp
