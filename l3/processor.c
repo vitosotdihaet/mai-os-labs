@@ -1,4 +1,11 @@
+<<<<<<< HEAD
 #include "shared.h"
+=======
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "string.h"
+>>>>>>> da3644b6874ce21edbe24fa2ac390d2d680e4a42
 
 
 string remove_vowels(string s) {

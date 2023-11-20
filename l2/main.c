@@ -58,16 +58,16 @@ int parse_argv(int argc, char *argv[]) {
     int num = DEFAULT_THREADS;
 
     if (argc != 2) {
-        printf("Not enough arguments (one number is needed)\nUsing %d threads as default\n", DEFAULT_THREADS);
+        // printf("Not enough arguments (one number is needed)\nUsing %d threads as default\n", DEFAULT_THREADS);
     } else {
         num = atoi(argv[1]);
 
         if (num < 1) {
-            printf("Invalid argument!\n");
+            // printf("Invalid argument!\n");
             num = DEFAULT_THREADS;
         }
 
-        printf("Using %d threads\n", num);
+        // printf("Using %d threads\n", num);
     }
 
     return num;
@@ -93,7 +93,6 @@ int main(int argc, char *argv[]) {
 
         if (arg[0] >= count) break;
         if (arg[1] > count) arg[1] = count;
-        // printf("i = %d\n", i);
 
         int ce = pthread_create(&thread_id, NULL, solve, arg);
         if (ce) {
@@ -110,14 +109,16 @@ int main(int argc, char *argv[]) {
 
     time = clock() - time;
 
-    printf("\nCalculations took %f seconds\n\n", ((double) time) / CLOCKS_PER_SEC);
+    printf("%.10f\n", ((double) time) / CLOCKS_PER_SEC);
 
-    printf("Max square is %f\n", max_s);
-    printf("Coordinates of a triangle with this square are (%d, %d); (%d, %d); (%d, %d)\n",
-        max_coords[0].x, max_coords[0].y,
-        max_coords[1].x, max_coords[1].y,
-        max_coords[2].x, max_coords[2].y
-    );
+    // printf("\nCalculations took %f seconds\n\n", ((double) time) / CLOCKS_PER_SEC);
+
+    // printf("Max square is %f\n", max_s);
+    // printf("Coordinates of a triangle with this square are (%d, %d); (%d, %d); (%d, %d)\n",
+    //     max_coords[0].x, max_coords[0].y,
+    //     max_coords[1].x, max_coords[1].y,
+    //     max_coords[2].x, max_coords[2].y
+    // );
 
     pthread_mutex_destroy(&mutex);
 
