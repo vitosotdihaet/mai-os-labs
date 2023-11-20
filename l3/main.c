@@ -15,7 +15,7 @@ int main() {
     handle(sem_init(&m->read2, 1, 0));
     handle(sem_init(&m->write1, 1, 0));
     handle(sem_init(&m->write2, 1, 0));
-    string_init(&m->buf);
+    for (int i = 0; i < SIZE; ++i) m->buf[i] = '\0';
     m->active = 1;
 
 
@@ -34,22 +34,12 @@ int main() {
 
         if (p_id > 0) { // TRUE parent process
             printf("Input strings [CTRL+D TO EXIT]:\n");
-            while (!string_read(&m->buf)) {
-                string_push_char(&m->buf, '\n');
-
-                printf("STRING IN MAIN = %s\n", m->buf.values);
-
+            while (scanf("%s", m->buf) != EOF) {
                 sem_post(&m->read1);
                 sem_post(&m->read2);
 
-                printf("[!] POSTED\n");
-
                 sem_wait(&m->write1);
-                printf("\tW1 done\n");
                 sem_wait(&m->write2);
-                printf("\tW2 done\n");
-
-                printf("[!] CAN WRITE\n");
             }
         } else { // child2
             char *argv[] = { "processor.out", "c2", "2", NULL };

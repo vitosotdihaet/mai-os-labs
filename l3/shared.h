@@ -13,6 +13,8 @@
 #include "string.h"
 
 
+#define SIZE 256
+
 #define crash_on(boolean) if (boolean) { fprintf(stderr, "Error at file %s, line %d\n", __FILE__, __LINE__); exit(1); }
 #define handle(i) crash_on(i == -1)
 
@@ -20,7 +22,7 @@
 const char* shared_memory_file = "/shared_lab3_mem";
 
 typedef struct {
-    string buf;
+    char buf[SIZE];
     sem_t read1;
     sem_t read2;
     sem_t write1;
