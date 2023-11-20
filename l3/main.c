@@ -19,13 +19,13 @@ int main() {
     m->active = 1;
 
 
-    // string filename1;
-    // printf("Input a filename in which you want to write output of child1: ");
-    // string_read(&filename1);
+    string filename1;
+    printf("Input a filename in which you want to write output of child1: ");
+    string_read(&filename1);
 
-    // string filename2;
-    // printf("Input a filename in which you want to write output of child2: ");
-    // string_read(&filename2);
+    string filename2;
+    printf("Input a filename in which you want to write output of child2: ");
+    string_read(&filename2);
 
     pid_t p_id = fork(); handle(p_id);
 
@@ -42,13 +42,11 @@ int main() {
                 sem_wait(&m->write2);
             }
         } else { // child2
-            char *argv[] = { "processor.out", "c2", "2", NULL };
-            // char *argv[] = { "processor.out", filename2.values, "2", NULL };
+            char *argv[] = { "processor.out", filename2.values, "2", NULL };
             handle(execv(argv[0], argv));
         }
     } else { // child1
-        char *argv[] = { "processor.out", "c1", "1", NULL };
-        // char *argv[] = { "processor.out", filename1.values, "1", NULL };
+        char *argv[] = { "processor.out", filename1.values, "1", NULL };
         handle(execv(argv[0], argv));
     }
 
