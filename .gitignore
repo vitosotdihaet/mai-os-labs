@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 *.exe
 *.out
 *.o
@@ -17,23 +16,4 @@ vgcore.*
 
 .~lock*
 
-=======
-*.exe
-*.out
-*.o
-
-vgcore.*
-
-*/main
-
-*.aux
-*.fdb_latexmk
-*.fls
-*.log
-*.gz
-
-.vscode
-.*env
-
->>>>>>> da3644b6874ce21edbe24fa2ac390d2d680e4a42
 */temp
