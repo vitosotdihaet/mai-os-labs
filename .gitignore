@@ -14,4 +14,6 @@ vgcore.*
 
 .vscode
 
+.~lock*
+
 */temp
