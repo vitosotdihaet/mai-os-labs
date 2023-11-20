@@ -1,81 +1,81 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include <sys/mman.h>
-
 #include "shared.h"
 
 
-#define handle(i) if (i == -1) { fprintf(stderr, "Error at file %s, line %d\n", __FILE__, __LINE__); exit(1); }
-#define crash_on(boolean) if (boolean) { fprintf(stderr, "Error at file %s, line %d\n", __FILE__, __LINE__); exit(1); }
-
-
-
 int main() {
-    string filename1;
-    printf("Input a filename in which you want to write output of child1: ");
-    string_read(&filename1);
+    int fd = shm_open(shared_memory_file, O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR); handle(fd);
 
-    string filename2;
-    printf("Input a filename in which you want to write output of child2: ");
-    string_read(&filename2);
+    handle(ftruncate(fd, sizeof(shared_data)));
+
+    shared_data *m = mmap(NULL, sizeof(shared_data), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0); crash_on(m == MAP_FAILED);
+
+    handle(sem_init(&m->read1, 1, 0));
+    handle(sem_init(&m->read2, 1, 0));
+    handle(sem_init(&m->write1, 1, 0));
+    handle(sem_init(&m->write2, 1, 0));
+    string_init(&m->buf);
+    m->active = 1;
 
 
-    shared_data* m = mmap(0, sizeof(shared_data), PROT_READ|PROT_WRITE, MAP_SHARED|MAP_ANONYMOUS, 0, 0); crash_on(m == MAP_FAILED);
+    // string filename1;
+    // printf("Input a filename in which you want to write output of child1: ");
+    // string_read(&filename1);
 
-
-    int p1[2];
-    handle(pipe(p1));
+    // string filename2;
+    // printf("Input a filename in which you want to write output of child2: ");
+    // string_read(&filename2);
 
     pid_t p_id = fork(); handle(p_id);
 
     if (p_id > 0) { // parent process
-        int p2[2];
-        handle(pipe(p2));
-
         p_id = fork(); handle(p_id);
 
         if (p_id > 0) { // TRUE parent process
-            handle(close(p2[0]));
-            handle(close(p1[0]));
-
-            string s;
-            string_init(&s);
-
             printf("Input strings [CTRL+D TO EXIT]:\n");
-            while (!string_read(&s)) {
-                uint64_t l = string_len(s);
-                string_push_char(&s, '\n');
+            while (!string_read(&m->buf)) {
+                string_push_char(&m->buf, '\n');
 
-                if (l > 10) {
-                    if (write(p2[1], s.values, l + 1) < l + 1) {
-                        fprintf(stderr, "Write didn't return enough bytes at %s, line %d!\n", __FILE__, __LINE__);
-                        exit(1);
-                    }
-                } else {
-                    if (write(p1[1], s.values, l + 1) < l + 1) {
-                        fprintf(stderr, "Write didn't return enough bytes at %s, line %d!\n", __FILE__, __LINE__);
-                        exit(1);
-                    }
-                }
+                printf("STRING IN MAIN = %s\n", m->buf.values);
+
+                sem_post(&m->read1);
+                sem_post(&m->read2);
+
+                printf("[!] POSTED\n");
+
+                sem_wait(&m->write1);
+                printf("\tW1 done\n");
+                sem_wait(&m->write2);
+                printf("\tW2 done\n");
+
+                printf("[!] CAN WRITE\n");
             }
-
-            handle(close(p2[1]));
-            handle(close(p1[1]));
         } else { // child2
-            handle(close(p2[1]));
-            handle(dup2(p2[0], STDIN_FILENO));
-
-            char *argv[] = { "processor.out", filename2.values, NULL };
+            char *argv[] = { "processor.out", "c2", "2", NULL };
+            // char *argv[] = { "processor.out", filename2.values, "2", NULL };
             handle(execv(argv[0], argv));
         }
     } else { // child1
-        handle(close(p1[1]));
-        handle(dup2(p1[0], STDIN_FILENO));
-
-        char *argv[] = { "processor.out", filename1.values, NULL };
+        char *argv[] = { "processor.out", "c1", "1", NULL };
+        // char *argv[] = { "processor.out", filename1.values, "1", NULL };
         handle(execv(argv[0], argv));
     }
+
+    m->active = 0;
+    sem_post(&m->read1);
+    sem_post(&m->read2);
+    sem_wait(&m->write1);
+    sem_wait(&m->write2);
+
+    sem_destroy(&m->read1);
+    sem_destroy(&m->read2);
+    sem_destroy(&m->write1);
+    sem_destroy(&m->write2);
+
+    munmap(m, sizeof(shared_data));
+
+    handle(shm_unlink(shared_memory_file));
 
     return 0;
 }
