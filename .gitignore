@@ -1,6 +1,7 @@
 *.exe
 *.out
 *.o
+*.so
 
 vgcore.*
 
