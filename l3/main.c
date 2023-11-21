@@ -11,11 +11,11 @@ int main() {
 
     shared_data *m = mmap(NULL, sizeof(shared_data), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0); crash_on(m == MAP_FAILED);
 
+    for (int i = 0; i < SIZE; ++i) m->buf[i] = '\0';
     handle(sem_init(&m->read1, 1, 0));
     handle(sem_init(&m->read2, 1, 0));
     handle(sem_init(&m->write1, 1, 0));
     handle(sem_init(&m->write2, 1, 0));
-    for (int i = 0; i < SIZE; ++i) m->buf[i] = '\0';
     m->active = 1;
 
 

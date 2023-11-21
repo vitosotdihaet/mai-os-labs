@@ -42,6 +42,7 @@ int main(int argc, char *argv[]) {
 
     shared_data *m = mmap(NULL, sizeof(shared_data), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0); crash_on(m == MAP_FAILED);
 
+
     while (m->active) {
         if (child_id == 1) {
             sem_wait(&m->read1);
@@ -67,7 +68,6 @@ int main(int argc, char *argv[]) {
             }
             sem_post(&m->write2);
         }
-
     }
 
     if (child_id == 1) sem_post(&m->write1);
