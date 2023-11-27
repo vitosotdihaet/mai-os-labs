@@ -66,6 +66,7 @@ int main(int argc, char *argv[]) {
                 printf("String after removing vowels %d: %s\n", child_id, processed.values);
                 fprintf(out, "%s\n", processed.values);
             }
+
             sem_post(&m->write2);
         }
     }

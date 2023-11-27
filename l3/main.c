@@ -34,8 +34,8 @@ int main() {
 
         if (p_id > 0) { // TRUE parent process
             printf("Input strings [CTRL+D TO EXIT]:\n");
-            while (fgets(m->buf, sizeof(m->buf), stdin) != NULL) {
-                for (unsigned long i = 0; i < sizeof(m->buf) / sizeof(char); ++i) {
+            while (fgets(m->buf, SIZE, stdin) != NULL) {
+                for (unsigned long i = 0; i < SIZE; ++i) {
                     if (m->buf[i] == '\n') { m->buf[i] = '\0'; break; }
                 }
 
