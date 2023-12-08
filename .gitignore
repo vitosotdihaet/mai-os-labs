@@ -20,3 +20,6 @@ vgcore.*
 .~lock*
 
 */temp
+
+l2/coordinates.h
+l2/coordinates.txt

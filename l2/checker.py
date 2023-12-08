@@ -1,4 +1,4 @@
-f = open('coords.txt')
+f = open('coordinates.txt')
 
 biggest_coords = (None, None, None)
 max_s = 0

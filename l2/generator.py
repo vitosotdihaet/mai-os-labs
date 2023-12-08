@@ -13,9 +13,33 @@ def random_coordinate():
     z = (randint(MIN_X, MAX_X), randint(MIN_Y, MAX_Y))
     return (x, y, z)
 
-f = open('coords.txt', 'w')
+header = open('coordinates.h', 'w')
 
-f.write(f'{GEN_NUM}\n')
+header.write(
+'typedef struct {\n\
+    int x;\n\
+    int y;\n\
+} coordinate;\n'
+)
+header.write('coordinate coordinates[][3] = {\n')
+
+# int coords[][] = {
+#     {{1, 2}, {2, 3}, {3, 6}},
+#     {{1, 2}, {2, 3}, {3, 6}},
+#     {{1, 2}, {2, 3}, {3, 6}},
+#     {{1, 2}, {2, 3}, {3, 6}},
+# };
+
+
+txt = open('coordinates.txt', 'w')
+txt.write(f'{GEN_NUM}')
+
 for i in range(GEN_NUM):
     x, y, z = random_coordinate()
-    f.write(f'{x[0]} {x[1]} {y[0]} {y[1]} {z[0]} {z[1]}\n');
+    header.write('\t{{' + f'{x[0]}' + ', ' + f'{x[1]}' + '}, '  )
+    header.write(   '{' + f'{y[0]}' + ', ' + f'{y[1]}' + '}, '  )
+    header.write(   '{' + f'{z[0]}' + ', ' + f'{z[1]}' + '}},\n')
+
+    txt.write(f'{x[0]} {x[1]} {y[0]} {y[1]} {z[0]} {z[1]}\n');
+
+header.write('};')
