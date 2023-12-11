@@ -1,7 +1,7 @@
 from random import randint
 
 
-GEN_NUM = 1_000_000
+GEN_NUM = 5_000_000
 
 MIN_X, MAX_X = -100, 100
 MIN_Y, MAX_Y = -100, 100

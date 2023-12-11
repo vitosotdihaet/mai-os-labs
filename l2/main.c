@@ -2,7 +2,12 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <math.h>
+
+#ifdef __linux__
 #include <time.h>
+#elif _WIN32
+#include <windows.h>
+#endif
 
 #include "coordinates.h"
 
@@ -12,15 +17,12 @@
 double max_s = 0;
 coordinate max_coords[3];
 
-// int *checked;
-
 pthread_mutex_t mutex;
 
 // Parallel solving problem by solving it on a subarray, comparing to global current max square and storing max_coords in a variable
 void *solve(void *args) {
     int *indexes = (int*) args;
     int left_index = indexes[0], right_index = indexes[1];
-    free(args);
 
     coordinate current_max[3];
     double current_max_s = 0;
@@ -28,7 +30,6 @@ void *solve(void *args) {
     double current_s = 0;
 
     for (int i = left_index; i < right_index; ++i) {
-        // checked[i]++;
         coordinate a = coordinates[i][0], b = coordinates[i][1], c = coordinates[i][2];
         int x1 = a.x, y1 = a.y;
         int x2 = b.x, y2 = b.y;
@@ -82,8 +83,6 @@ int main(int argc, char *argv[]) {
 
     int count = sizeof(coordinates)/(sizeof(coordinate) * 3);
 
-    // checked = calloc(count, sizeof(int));
-
     int index_delta = ceilf((float) count/ (float) threads_num);
 
     if (pthread_mutex_init(&mutex, NULL) != 0) {
@@ -91,23 +90,38 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
+    int **args = (int**) calloc(threads_num, sizeof(int*));
+
     for (int i = 0; i < threads_num; ++i) {
-        int *arg = calloc(2, sizeof(int));
-        arg[0] = index_delta * i;
-        arg[1] = index_delta * (i + 1);
+        args[i] = calloc(2, sizeof(int));
+        args[i][0] = index_delta * i;
+        args[i][1] = index_delta * (i + 1);
 
-        if (arg[0] >= count) break;
-        if (arg[1] > count) arg[1] = count;
+        if (args[i][0] >= count) { threads_num = i + 1; break; }
+        if (args[i][1] > count) { args[i][1] = count; threads_num = i + 1; break; }
+    }
 
-        int ce = pthread_create(&threads[i], NULL, solve, arg);
+
+#ifdef __linux__
+    clock_t time = clock();
+#elif _WIN32
+    LARGE_INTEGER frequency;
+    LARGE_INTEGER start;
+    LARGE_INTEGER end;
+    double interval;
+
+    QueryPerformanceFrequency(&frequency);
+    QueryPerformanceCounter(&start);
+#endif
+
+
+    for (int i = 0; i < threads_num; ++i) {
+        int ce = pthread_create(&threads[i], NULL, solve, args[i]);
         if (ce) {
             printf("Couldn't create thread %ld\n", threads[i]);
             exit(ce);
         }
     }
-
-
-    clock_t time = clock();
 
     for (int i = 0; i < threads_num; ++i) {
         int je = pthread_join(threads[i], NULL);
@@ -117,12 +131,18 @@ int main(int argc, char *argv[]) {
         }
     }
 
+
+#ifdef __linux__
     time = clock() - time;
 
-
     printf("%.32f\n", ((double) time) / CLOCKS_PER_SEC);
-
     // printf("\nCalculations took %f seconds\n\n", ((double) time) / CLOCKS_PER_SEC);
+#elif _WIN32
+    QueryPerformanceCounter(&end);
+    interval = (double) (end.QuadPart - start.QuadPart) / frequency.QuadPart;
+
+    printf("%.32f\n", interval);
+#endif
 
     // printf("Max square is %f\n", max_s);
     // printf("Coordinates of a triangle with this square are (%d, %d); (%d, %d); (%d, %d)\n",
@@ -131,11 +151,11 @@ int main(int argc, char *argv[]) {
     //     max_coords[2].x, max_coords[2].y
     // );
 
-    pthread_mutex_destroy(&mutex);
+    for (int i = 0; i < threads_num; ++i) {
+        free(args[i]);
+    } free(args);
 
-    // for (int i = 0; i < count; ++i) {
-    //     if (checked[i] > 0) printf("checked[%d] = %d\n", i, checked[i]);
-    // }
+    pthread_mutex_destroy(&mutex);
 
     return 0;
 }
