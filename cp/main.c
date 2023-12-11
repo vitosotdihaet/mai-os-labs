@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "binary_allocator.h"
+// todo: implement clamping right blocks if freed
 #include "buddy_allocator.h"
 
 

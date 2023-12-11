@@ -163,14 +163,17 @@ void* ba_deallocate(buddy_allocator *ba, void *block) {
 
     ba->free_blocks[order][free_block_index] = ba->blocks[block_index];
 
+    // if (free_block_index % 2 == 1) { right_clamp = true; }
+
     // clamp two blocks into one on higher level
     while (order < ba->max_order) {
         // todo: change to clamp even if it is the right block
         if (free_block_index >= pow2(ba->max_order - order)) break;
+
         // check if the right block not taken
         if (ba->free_blocks[order][free_block_index + 1] == NULL) break;
 
-        // clamp
+        // clamp left
         ba->free_blocks[order + 1][free_block_index / 2] = ba->free_blocks[order][free_block_index];
         ba->free_blocks[order][free_block_index] = NULL;
         ba->free_blocks[order][free_block_index + 1] = NULL;
