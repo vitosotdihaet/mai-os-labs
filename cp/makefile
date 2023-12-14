@@ -11,4 +11,4 @@ buddy_allocator: buddy_allocator.c
 	$(CC) $(CFLAGS) -g -c buddy_allocator.c
 
 clear:
-	rm -f *.out
+	rm -f *.out *.o
