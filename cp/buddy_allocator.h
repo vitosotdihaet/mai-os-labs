@@ -1,12 +1,8 @@
-#ifndef BUDDY_ALLOCATOR_H
-#define BUDDY_ALLOCATOR_H
+#ifndef _BUDDY_ALLOCATOR_H
+#define _BUDDY_ALLOCATOR_H
 
-#include <inttypes.h>
+#include "shared.h"
 
-typedef struct {
-    void *memory;
-    uint64_t taken;
-} block;
 
 typedef struct {
     // all the blocks of memory
@@ -16,13 +12,14 @@ typedef struct {
     uint64_t max_order;
 } buddy_allocator;
 
-buddy_allocator* ba_create(uint64_t byte_count);
-buddy_allocator* ba_create_with_block_size(uint64_t block_count, uint64_t block_size);
-void ba_destroy(buddy_allocator *ba);
 
-void* ba_allocate(buddy_allocator *ba, uint64_t byte_count);
-void* ba_deallocate(buddy_allocator *ba, void *block);
-void ba_print(buddy_allocator ba);
+buddy_allocator* buddy_create(uint64_t byte_count);
+buddy_allocator* buddy_create_with_block_size(uint64_t block_count, uint64_t block_size);
+void buddy_destroy(buddy_allocator *ba);
+
+void* buddy_allocate(buddy_allocator *ba, uint64_t bytes_needed);
+void* buddy_deallocate(buddy_allocator *ba, void *block);
+void buddy_print(buddy_allocator ba);
 
 
-#endif // BUDDY_ALLOCATOR_H
+#endif // _BUDDY_ALLOCATOR_H

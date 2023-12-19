@@ -5,10 +5,11 @@
 #include "buddy_allocator.h"
 
 
-int main() {
-    buddy_allocator *buda = ba_create(1024);
+void test_buddy() {
+    printf("--------------- BUDDY ALLOCATOR BIG TEST ---------------");
+    buddy_allocator *buda = buddy_create(1024);
 
-    int *arr1 = (int*) ba_allocate(buda, sizeof(int));
+    int *arr1 = (int*) buddy_allocate(buda, sizeof(int));
     arr1[0] = 123;
 
     printf("\nALLOC'D ARR1: arr1[0] = %d!\n\n", arr1[0]);
@@ -16,7 +17,7 @@ int main() {
 
     int n = 25;
 
-    char *arr_big = (char*) ba_allocate(buda, sizeof(char) * n);
+    char *arr_big = (char*) buddy_allocate(buda, sizeof(char) * n);
 
     for (int i = 0; i < n; ++i) arr_big[i] = (char) i + 65;
 
@@ -28,11 +29,9 @@ int main() {
 
     n = 10;
 
-    int **int_arr = (int**) ba_allocate(buda, sizeof(int*) * n);
-    printf("int_arr = %p\n", int_arr);
+    int **int_arr = (int**) buddy_allocate(buda, sizeof(int*) * n);
     for (int i = 0; i < n; ++i) {
-        int_arr[i] = (int*) ba_allocate(buda, sizeof(int) * n);
-        printf("int_arr[%d] = %p\n", i, int_arr[i]);
+        int_arr[i] = (int*) buddy_allocate(buda, sizeof(int) * n);
         for (int j = 0; j < n; ++j) {
             int_arr[i][j] = i + j;
         }
@@ -48,37 +47,124 @@ int main() {
     printf("\b\b \b\n\n");
 
 
-    ba_deallocate(buda, arr_big);
-    ba_destroy(buda);
+    buddy_deallocate(buda, arr_big);
+    buddy_destroy(buda);
     free(buda);
 
 
-    buddy_allocator *buda2 = ba_create(8);
+    printf("\n--------------- BUDDY ALLOCATOR SMOL TEST ---------------\n\n");
+    buddy_allocator *buda2 = buddy_create(8);
+    buddy_print(*buda2);
 
-    int *new_arr1 = (int*) ba_allocate(buda2, sizeof(int));
+    int *new_arr1 = (int*) buddy_allocate(buda2, sizeof(int));
     new_arr1[0] = 123;
 
     printf("\nALLOC'D NEW_ARR1: new_arr1[0] = %d!\n\n", new_arr1[0]);
-    ba_print(*buda2);
+    buddy_print(*buda2);
 
 
-    int *arr2 = (int*) ba_allocate(buda2, sizeof(int));
+    int *arr2 = (int*) buddy_allocate(buda2, sizeof(int));
 
     printf("\nALLOC'D ARR2: arr2[0] = %d!\n\n", arr2[0]);
-    ba_print(*buda2);
+    buddy_print(*buda2);
 
 
-    ba_deallocate(buda2, new_arr1);
+    buddy_deallocate(buda2, new_arr1);
     printf("\nDEALLOC'D ARR1!\n\n");
-    ba_print(*buda2);
+    buddy_print(*buda2);
 
-    ba_deallocate(buda2, arr2);
+    buddy_deallocate(buda2, arr2);
     printf("\nDEALLOC'D ARR2!\n\n");
-    ba_print(*buda2);
+    buddy_print(*buda2);
 
 
-    ba_destroy(buda2);
+    buddy_destroy(buda2);
     free(buda2);
+}
+
+void test_bin_alloc() {
+    printf("\n--------------- BINARY ALLOCATOR BIG TEST ---------------\n\n");
+    binary_allocator *bina = bin_alloc_create(1024);
+
+    int *arr1 = (int*) bin_alloc_allocate(bina, sizeof(int));
+    arr1[0] = 123;
+
+    printf("\nALLOC'D ARR1: arr1[0] = %d!\n\n", arr1[0]);
+
+
+    int n = 25;
+
+    char *arr_big = (char*) bin_alloc_allocate(bina, sizeof(char) * n);
+
+    for (int i = 0; i < n; ++i) arr_big[i] = (char) i + 65;
+
+    printf("\nALLOC'D ARR_BIG: arr_big = ");
+
+    for (int i = 0; i < n; ++i) printf("%c, ", arr_big[i]);
+    printf("\b\b \b\n\n");
+
+
+    n = 10;
+
+    int **int_arr = (int**) bin_alloc_allocate(bina, sizeof(int*) * n);
+    for (int i = 0; i < n; ++i) {
+        int_arr[i] = (int*) bin_alloc_allocate(bina, sizeof(int) * n);
+        for (int j = 0; j < n; ++j) {
+            int_arr[i][j] = i + j;
+        }
+    }
+
+    printf("\nALLOC'D INT_ARR: int_arr:\n");
+
+    for (int i = 0; i < n; ++i) {
+        printf("%p: ", int_arr[i]);
+        for (int j = 0; j < n; ++j) printf("%d, ", int_arr[i][j]);
+        printf("\b\b \b\n");
+    }
+    printf("\b\b \b\n\n");
+
+
+    bin_alloc_deallocate(bina, arr_big);
+    printf("\nDEALLOC'D ARR_BIG:\n\n");
+    bin_alloc_print(*bina);
+    bin_alloc_destroy(bina);
+    free(bina);
+
+
+    printf("\n--------------- BINARY ALLOCATOR SMOL TEST ---------------\n\n");
+    binary_allocator *bina2 = bin_alloc_create(8);
+    bin_alloc_print(*bina2);
+
+    int *new_arr1 = (int*) bin_alloc_allocate(bina2, sizeof(int));
+    new_arr1[0] = 123;
+
+    printf("\nALLOC'D NEW_ARR1: new_arr1[0] = %d!\n\n", new_arr1[0]);
+    bin_alloc_print(*bina2);
+
+
+    int *arr2 = (int*) bin_alloc_allocate(bina2, sizeof(int));
+
+    printf("\nALLOC'D ARR2: arr2[0] = %d!\n\n", arr2[0]);
+    bin_alloc_print(*bina2);
+
+
+    bin_alloc_deallocate(bina2, new_arr1);
+    printf("\nDEALLOC'D ARR1!\n\n");
+    bin_alloc_print(*bina2);
+
+    bin_alloc_deallocate(bina2, arr2);
+    printf("\nDEALLOC'D ARR2!\n\n");
+    bin_alloc_print(*bina2);
+
+
+    bin_alloc_destroy(bina2);
+    free(bina2);
+}
+
+
+int main() {
+    test_buddy();
+    test_bin_alloc();
 
     return 0;
 }

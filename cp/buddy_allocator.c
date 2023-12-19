@@ -5,29 +5,7 @@
 #include "buddy_allocator.h"
 
 
-#define max(a, b) a > b ? a : b
-
-
-uint64_t closest_pow2(uint64_t n) {
-    n -= 1;
-    uint64_t result = 1;
-    for (; n != 0; n /= 2) result *= 2;
-    return result;
-}
-
-uint64_t closest_n_pow2(uint64_t n) {
-    n -= 1;
-    uint64_t result = 0;
-    for (; n != 0; n /= 2) result += 1;
-    return result;
-}
-
-uint64_t pow2(uint64_t n) {
-    return 1 << n;
-}
-
-
-buddy_allocator* ba_create(uint64_t byte_count) {
+buddy_allocator* buddy_create(uint64_t byte_count) {
     byte_count = closest_pow2(byte_count);
     uint64_t max_order = closest_n_pow2(byte_count);
 
@@ -39,12 +17,10 @@ buddy_allocator* ba_create(uint64_t byte_count) {
     assert(blocks != NULL);
 
     for (uint64_t i = 0; i < byte_count; ++i) {
-        block *b = calloc(sizeof(block), 1);
+        block *b = calloc(1, sizeof(block));
+        assert(b != NULL);
         b->memory = memory + i;
-        b->taken = 0;
         blocks[i] = b;
-        assert(blocks[i] != NULL);
-        assert(blocks[i]->memory != NULL);
     }
 
 
@@ -60,6 +36,7 @@ buddy_allocator* ba_create(uint64_t byte_count) {
 
 
     buddy_allocator *ba = (buddy_allocator*) calloc(1, sizeof(buddy_allocator));
+    assert(ba != NULL);
 
     ba->blocks = blocks;
     ba->free_blocks = free_blocks;
@@ -68,11 +45,11 @@ buddy_allocator* ba_create(uint64_t byte_count) {
     return ba;
 }
 
-buddy_allocator* ba_create_with_block_size(uint64_t block_count, uint64_t block_size) {
-    return ba_create(block_count * block_size);
+buddy_allocator* buddy_create_with_block_size(uint64_t block_count, uint64_t block_size) {
+    return buddy_create(block_count * block_size);
 }
 
-void ba_destroy(buddy_allocator *ba) {
+void buddy_destroy(buddy_allocator *ba) {
     free(ba->blocks[0]->memory);
     for (uint64_t i = 0; i < pow2(ba->max_order); ++i) {
         free(ba->blocks[i]);
@@ -86,7 +63,7 @@ void ba_destroy(buddy_allocator *ba) {
 }
 
 
-void* ba_divide_block(buddy_allocator *ba, block *block, uint64_t order, uint64_t bytes_needed) {
+void* buddy_divide_block(buddy_allocator *ba, block *block, uint64_t order, uint64_t bytes_needed) {
     void *result = NULL;
 
     uint64_t block_index = 0;
@@ -109,7 +86,7 @@ void* ba_divide_block(buddy_allocator *ba, block *block, uint64_t order, uint64_
     }
 
     if (pow2(order - 1) > bytes_needed) {
-        result = ba_divide_block(ba, ba->free_blocks[order - 1][free_block_moved_index], order - 1, bytes_needed);
+        result = buddy_divide_block(ba, ba->free_blocks[order - 1][free_block_moved_index], order - 1, bytes_needed);
     } else {
         ba->free_blocks[order - 1][free_block_moved_index]->taken = bytes_needed;
         result = ba->free_blocks[order - 1][free_block_moved_index]->memory;
@@ -119,7 +96,7 @@ void* ba_divide_block(buddy_allocator *ba, block *block, uint64_t order, uint64_
     return result;
 }
 
-void* ba_allocate(buddy_allocator *ba, uint64_t bytes_needed) {
+void* buddy_allocate(buddy_allocator *ba, uint64_t bytes_needed) {
     void *result = NULL;
     bytes_needed = closest_pow2(bytes_needed);
 
@@ -128,7 +105,7 @@ void* ba_allocate(buddy_allocator *ba, uint64_t bytes_needed) {
             if (ba->free_blocks[i][j] == NULL) continue;
 
             if (pow2(i) > bytes_needed) {
-                return ba_divide_block(ba, ba->free_blocks[i][j], i, bytes_needed);
+                return buddy_divide_block(ba, ba->free_blocks[i][j], i, bytes_needed);
             } else if (pow2(i) == bytes_needed) {
                 ba->free_blocks[i][j]->taken = bytes_needed;
                 result = ba->free_blocks[i][j]->memory;
@@ -141,7 +118,7 @@ void* ba_allocate(buddy_allocator *ba, uint64_t bytes_needed) {
     return result;
 }
 
-void* ba_deallocate(buddy_allocator *ba, void *block) {
+void* buddy_deallocate(buddy_allocator *ba, void *block) {
     uint64_t block_index = 0, free_block_index = 0;
     for (; block_index < pow2(ba->max_order); ++block_index) if (ba->blocks[block_index]->memory == block) break;
 
@@ -188,18 +165,18 @@ void* ba_deallocate(buddy_allocator *ba, void *block) {
 }
 
 
-void ba_print(buddy_allocator ba) {
+void buddy_print(buddy_allocator ba) {
     printf(
         "ba = {\n"
         "\tmax_order = %"PRIu64"\n",
         ba.max_order
     );
 
-    // printf("\tblocks = {\n");
-    // for (uint64_t i = 0; i < pow2(ba.max_order); ++i) {
-    //     printf("\t\t%"PRIu64": %p, %"PRIu64"\n", i, ba.blocks[i]->memory, ba.blocks[i]->taken);
-    // }
-    // printf("\t}\n");
+    printf("\tblocks = {\n\t");
+    for (uint64_t i = 0; i < pow2(ba.max_order); ++i) {
+        printf("%"PRIu64": %p, %"PRIu64"; ", i, ba.blocks[i]->memory, ba.blocks[i]->taken);
+    }
+    printf("\t}\n");
 
 
     printf("\tfree_blocks: {\n");
