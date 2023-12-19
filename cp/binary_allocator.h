@@ -2,13 +2,25 @@
 #define _BINARY_ALLOCATOR_H
 
 #include "shared.h"
+#include <stdbool.h>
 
+
+typedef struct fb {
+    void *memory;
+    struct fb *next;
+} forward_block;
 
 typedef struct {
-    block *blocks; // [*, 2], [*, 1], [*, 0], [*, 1], [*, 0], ...
-    uint64_t *free; // 0, 0, 1, 0, 1, ...
-    uint64_t byte_count;
+    block *blocks;
+    forward_block **free_blocks; // ith element is a forward-list of memory with capacity 2^i
+    uint64_t max_order;
 } binary_allocator;
+
+/*
+free_blocks:
+capacity = 2^0: [*, ->][*, ->]0
+capacity = 2^1: [*, ->]0
+*/
 
 
 binary_allocator* bin_alloc_create(uint64_t byte_count);

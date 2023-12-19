@@ -130,12 +130,12 @@ void* buddy_deallocate(buddy_allocator *ba, void *block) {
     ba->free_blocks[order][free_block_index] = ba->blocks[block_index];
 
     int right_clamp = 0;
-    if (free_block_index % 2 == 1) right_clamp = 1;
+    right_clamp = free_block_index % 2;
 
     // clamp two blocks into one on higher level
     while (order < ba->max_order) {
-        // todo: change to clamp even if it is the right block
-        if (free_block_index >= pow2(ba->max_order - order)) break;
+        // todo: fix
+        if (free_block_index >= pow2(ba->max_order - order) - 1) break;
 
         // check if the right block not taken
         if (!right_clamp && ba->free_blocks[order][free_block_index + 1] == NULL) break;
@@ -172,11 +172,13 @@ void buddy_print(buddy_allocator ba) {
         ba.max_order
     );
 
-    printf("\tblocks = {\n\t");
-    for (uint64_t i = 0; i < pow2(ba.max_order); ++i) {
-        printf("%"PRIu64": %p, %"PRIu64"; ", i, ba.blocks[i]->memory, ba.blocks[i]->taken);
+    if (ba.max_order < 6) {
+        printf("\tblocks = {\n\t");
+        for (uint64_t i = 0; i < pow2(ba.max_order); ++i) {
+            printf("%"PRIu64": %p, %"PRIu64"; ", i, ba.blocks[i]->memory, ba.blocks[i]->taken);
+        }
+        printf("\t}\n");
     }
-    printf("\t}\n");
 
 
     printf("\tfree_blocks: {\n");
@@ -186,7 +188,7 @@ void buddy_print(buddy_allocator ba) {
             if (ba.free_blocks[i][j] != NULL) {
                 printf("%p, %"PRIu64"; ", ba.free_blocks[i][j]->memory, ba.free_blocks[i][j]->taken);
             } else {
-                printf("(nil); ");
+                printf("_; ");
             }
         }
         printf("\n");
