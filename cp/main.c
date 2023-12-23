@@ -69,34 +69,34 @@ void test_buddy() {
     free(buda);
 
 
-    // printf("\n--------------- BUDDY ALLOCATOR SMOL TEST ---------------\n\n");
-    // buddy_allocator *buda2 = buddy_create(8);
-    // buddy_print(*buda2);
+    printf("\n--------------- BUDDY ALLOCATOR SMOL TEST ---------------\n\n");
+    buddy_allocator *buda2 = buddy_create(8);
+    buddy_print(*buda2);
 
-    // int *new_arr1 = (int*) buddy_allocate(buda2, sizeof(int));
-    // new_arr1[0] = 123;
+    int *new_arr1 = (int*) buddy_allocate(buda2, sizeof(int));
+    new_arr1[0] = 123;
 
-    // printf("\nALLOC'D NEW_ARR1: new_arr1[0] = %d!\n\n", new_arr1[0]);
-    // buddy_print(*buda2);
-
-
-    // int *arr2 = (int*) buddy_allocate(buda2, sizeof(int));
-
-    // printf("\nALLOC'D ARR2: arr2[0] = %d!\n\n", arr2[0]);
-    // buddy_print(*buda2);
+    printf("\nALLOC'D NEW_ARR1: new_arr1[0] = %d!\n\n", new_arr1[0]);
+    buddy_print(*buda2);
 
 
-    // buddy_deallocate(buda2, new_arr1);
-    // printf("\nDEALLOC'D ARR1!\n\n");
-    // buddy_print(*buda2);
+    int *arr2 = (int*) buddy_allocate(buda2, sizeof(int));
 
-    // buddy_deallocate(buda2, arr2);
-    // printf("\nDEALLOC'D ARR2!\n\n");
-    // buddy_print(*buda2);
+    printf("\nALLOC'D ARR2: arr2[0] = %d!\n\n", arr2[0]);
+    buddy_print(*buda2);
 
 
-    // buddy_destroy(buda2);
-    // free(buda2);
+    buddy_deallocate(buda2, new_arr1);
+    printf("\nDEALLOC'D ARR1!\n\n");
+    buddy_print(*buda2);
+
+    buddy_deallocate(buda2, arr2);
+    printf("\nDEALLOC'D ARR2!\n\n");
+    buddy_print(*buda2);
+
+
+    buddy_destroy(buda2);
+    free(buda2);
 }
 
 void test_bin_alloc() {

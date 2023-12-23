@@ -129,35 +129,31 @@ void* buddy_deallocate(buddy_allocator *ba, void *block) {
 
     ba->free_blocks[order][free_block_index] = ba->blocks[block_index];
 
-    int right_clamp = 0;
-    right_clamp = free_block_index % 2;
+    int is_right = 0;
+    is_right = free_block_index % 2;
 
     // clamp two blocks into one on higher level
     while (order < ba->max_order) {
         // todo: fix
-        if (free_block_index >= pow2(ba->max_order - order) - 1) break;
+        if (free_block_index >= pow2(ba->max_order - order)) break;
 
-        // check if the right block not taken
-        if (!right_clamp && ba->free_blocks[order][free_block_index + 1] == NULL) break;
-
-        // check if the left block not taken
-        if (right_clamp && ba->free_blocks[order][free_block_index - 1] == NULL) break;
-
-        if (!right_clamp) {
-            // clamp from left
-            ba->free_blocks[order + 1][free_block_index / 2] = ba->free_blocks[order][free_block_index];
-            ba->free_blocks[order][free_block_index] = NULL;
-            ba->free_blocks[order][free_block_index + 1] = NULL;
-        } else {
-            // clamp from right
+        if (is_right) {
+            // clamp this and left
+            if (ba->free_blocks[order][free_block_index - 1] == NULL) break;
             ba->free_blocks[order + 1][free_block_index / 2] = ba->free_blocks[order][free_block_index - 1];
             ba->free_blocks[order][free_block_index - 1] = NULL;
             ba->free_blocks[order][free_block_index] = NULL;
-            right_clamp = 0;
-        }
+        } else {
+            // clamp this and right
+            if (ba->free_blocks[order][free_block_index + 1] == NULL) break;
+            ba->free_blocks[order + 1][free_block_index / 2] = ba->free_blocks[order][free_block_index];
+            ba->free_blocks[order][free_block_index] = NULL;
+            ba->free_blocks[order][free_block_index + 1] = NULL;
+        } 
 
         // go next level
         free_block_index /= 2;
+        is_right = free_block_index % 2;
         order++;
     }
 
