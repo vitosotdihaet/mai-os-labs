@@ -2,6 +2,8 @@
 #include <string>
 #include <map>
 
+#include <zmq.hpp>
+
 
 static std::map<std::string, int> var_map;
 
@@ -15,30 +17,49 @@ std::string next(std::string* s) {
     return result;
 }
 
-int main() {
+int main(int argc, const char *argv[]) {
+    if (argc != 2) {
+        std::cout << "Usage:\n\t" << argv[0] << " <socket_path>\n";
+        return 0;
+    }
+
+    zmq::context_t context;
+    zmq::socket_t socket(context, ZMQ_REP);
+    socket.bind(argv[1]);
+
     bool run = true;
 
-    std::string s = std::string();
-    while (run && getline(std::cin, s)) {
-        s.push_back('\n');
+    while (run) {
+        zmq::message_t request;
 
-        std::string no_command = s.substr(1, s.size() - 1);
-        std::string var = next(&no_command);
+        std::cout << "Waiting for a msg...\n";
+        socket.recv(request, zmq::recv_flags::none);
 
-        if (s[0] == 'g') {
+        std::string s = std::string(static_cast<char*>(request.data()), request.size());
+        std::string to_send;
+
+        char command = next(&s)[0];
+        std::string var = next(&s);
+
+        if (command == 'g') {
             int value = 0;
             if (var_map.find(var) != var_map.end()) {
                 value = var_map.at(var);
-                std::cout << "Ok: " << var << ": " << value << '\n';
+                to_send += var + ": " + std::to_string(value);
             } else {
-                std::cout << "Ok: " << var << ": not found\n";
+                to_send = var + " not found";
             }
-        } else if (s[0] == 's') {
-            int value = std::stoi(next(&no_command));
+        } else if (command == 's') {
+            int value = std::stoi(next(&s));
             var_map.insert(std::pair(var, value));
-            std::cout << "Ok: " << var << " is set to " << value << '\n';
+            to_send = var + " is set to " + std::to_string(value);
         } else {
+            // TODO: queue messages to next child
             run = false;
         }
+
+        socket.send(zmq::buffer(to_send), zmq::send_flags::none);
     }
+
+    return 0;
 }

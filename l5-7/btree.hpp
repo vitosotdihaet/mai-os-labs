@@ -3,26 +3,23 @@
 #include <tuple>
 #include <optional>
 
+#include <zmq.hpp>
+
 
 int pow2(int n) {
-    int result = 1;
-
-    for (int i = 0; i < n; ++i) {
-        result *= 2;
-    }
-
-    return result;
+    return 2 << n;
 }
 
 
 class ProcessTree {
 private:
     struct Node {
-        std::tuple<int, pid_t, int> data;
+        // child_id, socket, is active
+        std::tuple<int, zmq::socket_t*, bool> data;
         Node* left;
         Node* right;
 
-        Node(std::tuple<int, pid_t, int> data): data(data), left(nullptr), right(nullptr) {}
+        Node(std::tuple<int, zmq::socket_t*, bool> data): data(data), left(nullptr), right(nullptr) {}
     };
 
     Node* root;
@@ -43,7 +40,7 @@ private:
 public:
     ProcessTree(): root(nullptr) { levels = std::vector<std::vector<Node*>>(0); }
 
-    void insert(std::tuple<int, pid_t, int> data) {
+    void insert(std::tuple<int, zmq::socket_t*, bool> data) {
         if (root == nullptr) {
             root = new Node(data);
             levels.push_back(std::vector<Node*>(1, root));
@@ -83,10 +80,10 @@ public:
         return false;
     }
 
-    std::optional<std::tuple<int, pid_t, int>> get_by_id(int id) {
+    std::optional<std::tuple<int, zmq::socket_t*, bool>> get_by_id(int id) {
         for (auto level: levels) {
             for (auto e: level) {
-                if (std::get<0>(e->data) == id) return e->data;
+                if (std::get<0>(e->data) == id) return std::make_optional(e->data);
             }
         }
 

@@ -3,6 +3,9 @@
 #include <string>
 #include <optional>
 #include <tuple>
+#include <thread>
+
+#include <zmq.hpp>
 
 #include "btree.hpp"
 
@@ -26,7 +29,11 @@ std::string next(std::string* s) {
 int main() {
     std::string line = std::string();
 
-    processes.insert(std::tuple(0, getpid(), 0));
+    zmq::context_t ctx;
+    zmq::socket_t *root_socket = new zmq::socket_t(ctx, ZMQ_REQ);
+    // root_socket->connect("ipc:///tmp/lab5_0");
+
+    processes.insert(std::tuple(0, root_socket, true));
 
     std::cout << "> ";
     while (getline(std::cin, line)) {
@@ -40,27 +47,23 @@ int main() {
             if (processes.is_in_tree(child_id)) {
                 std::cout << "Error: Child with id = " << child_id << " already exists!\n";
             } else {
-                int p[2];
-                handle(pipe(p));
+                std::string socket_path = "ipc:///tmp/lab5_" + std::to_string(child_id);
+                zmq::socket_t *socket = new zmq::socket_t(ctx, ZMQ_REQ);
+                socket->connect(socket_path);
 
                 pid_t child_pid = fork();
+
                 if (child_pid == -1) {
                     std::cout << "Error: Could not fork current process!\n";
                 } else if (child_pid == 0) {
-                    handle(close(p[1]));
-                    if (dup2(p[0], STDIN_FILENO) == -1) {
-                        std::cout << "Error: Could not dup2!\n";
-                        std::cout << "> ";
-                        continue;
-                    }
+                    char *socket_path_c_str = (char*) calloc(socket_path.size(), sizeof(char));
+                    memcpy(socket_path_c_str, socket_path.c_str(), socket_path.size() * sizeof(char));
 
-                    char *const argv[] = { "child.out", NULL };
+                    char *const argv[] = { "child.out", socket_path_c_str, NULL };
                     if (execv(argv[0], argv) == -1) std::cout << "Error: Could not create a child process!\n";
                 } else {
-                    handle(close(p[0]));
-
                     std::cout << "Ok: child pid is " << child_pid << '\n';
-                    processes.insert(std::tuple(child_id, child_pid, p[1]));
+                    processes.insert(std::tuple(child_id, socket, true));
                 }
             }
         } else if (command == std::string("exec")) {
@@ -70,7 +73,7 @@ int main() {
 
             if (line.size() > 0) {
                 // set variable in child process
-                std::optional<std::tuple<int, pid_t, int>> data = processes.get_by_id(child_id);
+                std::optional<std::tuple<int, zmq::socket_t*, bool>> data = processes.get_by_id(child_id);
 
                 if (!data) {
                     std::cout << "Error: No child with id = " << child_id << "!\n";
@@ -80,20 +83,25 @@ int main() {
 
                 std::string value = next(&line);
 
-                int count = 1 + var.size() + 1 + value.size() + 1;
-                char *buf = (char*) calloc(count, sizeof(char));
-                buf[0] = 's';
-                for (int i = 0; i < var.size(); ++i) buf[i + 1] = var[i];
-                buf[1 + var.size()] = ' ';
-                for (int i = 0; i < value.size(); ++i) buf[i + 1 + var.size() + 1] = value[i];
-                buf[count - 1] = '\n';
+                std::string msg = "s " + var + " " + value;
 
-                if (write(std::get<2>(data.value()), buf, count * sizeof(char)) != count * sizeof(char)) {
-                    std::cout << "Error: Writing to child with id = " << child_id << " failed!\n";
-                }
+                zmq::socket_t *socket = std::get<1>(data.value());
+
+                socket->send(zmq::buffer(msg), zmq::send_flags::none);
+
+                std::thread wait(
+                    [&socket]() {
+                        zmq::message_t request;
+                        socket->recv(request, zmq::recv_flags::none);
+
+                        std::string message = std::string(static_cast<char*>(request.data()), request.size());
+                        std::cout << "Ok: " << std::get<0>(data.value()) << ": " << message << std::endl;
+                    }
+                );
+                wait.join();
             } else {
                 // find variable in child process
-                std::optional<std::tuple<int, pid_t, int>> data = processes.get_by_id(child_id);
+                std::optional<std::tuple<int, zmq::socket_t*, bool>> data = processes.get_by_id(child_id);
 
                 if (!data) {
                     std::cout << "Error: No child with id = " << child_id << "!\n";
@@ -101,23 +109,33 @@ int main() {
                     continue;
                 }
 
-                int count = var.size() + 2;
-                char *buf = (char*) calloc(count, sizeof(char));
-                buf[0] = 'g';
-                for (int i = 0; i < var.size(); ++i) buf[i + 1] = var[i];
-                buf[count - 1] = '\n';
+                std::string msg = "g " + var;
 
-                if (write(std::get<2>(data.value()), buf, count * sizeof(char)) != count * sizeof(char)) {
-                    std::cout << "Error: Writing to child with id = " << child_id << " failed!\n";
-                }
+                zmq::socket_t *socket = std::get<1>(data.value());
+
+                socket->send(zmq::buffer(msg), zmq::send_flags::none);
+
+                std::thread wait(
+                    [&socket]() {
+                        zmq::message_t request;
+                        socket->recv(request, zmq::recv_flags::none);
+
+                        std::string message = std::string(static_cast<char*>(request.data()), request.size());
+                        std::cout << "Received request in main: " << message << std::endl;
+                    }
+                );
+                wait.join();
             }
         } else if (command == std::string("ping")) {
             int child_id = std::stoi(next(&line));
 
             if (!processes.is_in_tree(child_id)) std::cout << "Error: Child with id = " << child_id << " does not exist!\n";
+            // TODO: check if socket is broken (if the file of socket exists | send a message and wait a bit)
             else std::cout << "Ok: " << child_id << '\n';
         } else if (command == std::string("dbg")) {
             processes.print_levels();
+        } else if (command == std::string("exit")) {
+            break;
         }
 
         std::cout << "> ";
