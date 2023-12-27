@@ -1,7 +1,6 @@
 #include <iostream>
 #include <string>
 #include <map>
-#include <thread>
 
 #include <chrono>
 using namespace std::chrono_literals;
@@ -9,9 +8,8 @@ using namespace std::chrono_literals;
 #include <zmq.hpp>
 
 
+std::map<std::string, int> var_map;
 bool waiting = true;
-
-static std::map<std::string, int> var_map;
 
 
 std::string next(std::string* s) {
@@ -38,13 +36,12 @@ int main(int argc, const char *argv[]) {
 
     while (run) {
         zmq::message_t request;
-
         socket.recv(request, zmq::recv_flags::none);
 
         std::string s = std::string(static_cast<char*>(request.data()), request.size());
-        std::string to_send;
-
         std::string command = next(&s);
+
+        std::string to_send;
 
         if (command[0] == 'g') {
             std::string var = next(&s);
@@ -73,13 +70,11 @@ int main(int argc, const char *argv[]) {
 
             next_socket.send(zmq::buffer(s), zmq::send_flags::none);
 
-            // TODO: if wait time is more than 100ms => send Err in to_send
-            waiting = true;
             zmq::message_t request;
 
             auto start = std::chrono::steady_clock::now();
 
-            while (true && waiting) {
+            while (true) {
                 if (next_socket.recv(request, zmq::recv_flags::dontwait)) {
                     to_send = std::string(static_cast<char*>(request.data()), request.size());
                     break;
@@ -90,10 +85,10 @@ int main(int argc, const char *argv[]) {
                     break;
                 }
             }
-
-            waiting = false;
+        } else if (command == "ping") {
+            to_send = "Ok: process is alive";
         } else {
-            run = false;
+            break;
         }
 
         socket.send(zmq::buffer(to_send), zmq::send_flags::none);

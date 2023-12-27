@@ -29,11 +29,19 @@ private:
     void free_(Node* n) {
         if (n->left != nullptr) {
             free_(n->left);
+            zmq::context_t ctx;
+            zmq::socket_t socket(ctx, ZMQ_REQ);
+            socket.connect("ipc:///tmp/lab5_" + std::to_string(std::get<0>(n->data)));
+            // socket.send(zmq::buffer(std::string("die\n")), zmq::send_flags::none);
             delete(n->left);
         }
 
         if (n->right != nullptr) {
             free_(n->right);
+            zmq::context_t ctx;
+            zmq::socket_t socket(ctx, ZMQ_REQ);
+            socket.connect("ipc:///tmp/lab5_" + std::to_string(std::get<0>(n->data)));
+            // socket.send(zmq::buffer(std::string("die\n")), zmq::send_flags::none);
             delete(n->right);
         }
     }

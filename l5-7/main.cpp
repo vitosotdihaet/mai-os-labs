@@ -139,9 +139,28 @@ int main() {
         } else if (command == std::string("ping")) {
             int child_id = std::stoi(next(&line));
 
-            if (!processes.is_in_tree(child_id)) std::cout << "Error: Child with id = " << child_id << " does not exist!\n";
-            // TODO: check if socket is broken (if the file of socket exists | send a message and wait a bit)
-            else std::cout << "Ok: " << child_id << '\n';
+            // TODO: check if socket is broken (if the file of socket exists | send a message and wait a bit)            
+            std::optional<std::vector<int>> path = processes.get_path_to(child_id);
+
+            if (!path) {
+                std::cout << "Error: No child with id = " << child_id << "!\n";
+                std::cout << "> ";
+                continue;
+            }
+
+            std::string msg_command = "ping\n";
+            std::string msg;
+
+            for (unsigned long i = 1; i < path.value().size(); ++i) {
+                int id = path.value()[i];
+                msg += std::to_string(id) + ' ';
+            }
+            msg += msg_command;
+
+            root_socket.send(zmq::buffer(msg), zmq::send_flags::none);
+            
+            std::thread wait(send_msg);
+            wait.join();
         } else if (command == std::string("dbg")) {
             processes.print_levels();
         } else if (command == std::string("exit")) {
