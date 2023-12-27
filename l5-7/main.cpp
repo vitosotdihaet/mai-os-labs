@@ -26,14 +26,25 @@ std::string next(std::string* s) {
     return result;
 }
 
+zmq::context_t ctx;
+zmq::socket_t *root_socket = new zmq::socket_t(ctx, ZMQ_REQ);
+
+
 int main() {
     std::string line = std::string();
+    root_socket->connect("ipc:///tmp/lab5_0");
 
-    zmq::context_t ctx;
-    zmq::socket_t *root_socket = new zmq::socket_t(ctx, ZMQ_REQ);
-    // root_socket->connect("ipc:///tmp/lab5_0");
+    pid_t child_pid = fork();
 
-    processes.insert(std::tuple(0, root_socket, true));
+    if (child_pid == -1) {
+        std::cout << "Error: Could not fork current process!\n";
+        return 1;
+    } else if (child_pid == 0) {
+        char* argv[] = { "./child.out", "ipc:///tmp/lab5_0", NULL };
+        if (execv(argv[0], argv) == -1) std::cout << "Error: Could not create a child process!\n";
+    }
+
+    processes.insert(std::tuple(0, true));
 
     std::cout << "> ";
     while (getline(std::cin, line)) {
@@ -48,8 +59,6 @@ int main() {
                 std::cout << "Error: Child with id = " << child_id << " already exists!\n";
             } else {
                 std::string socket_path = "ipc:///tmp/lab5_" + std::to_string(child_id);
-                zmq::socket_t *socket = new zmq::socket_t(ctx, ZMQ_REQ);
-                socket->connect(socket_path);
 
                 pid_t child_pid = fork();
 
@@ -59,11 +68,11 @@ int main() {
                     char *socket_path_c_str = (char*) calloc(socket_path.size(), sizeof(char));
                     memcpy(socket_path_c_str, socket_path.c_str(), socket_path.size() * sizeof(char));
 
-                    char *const argv[] = { "child.out", socket_path_c_str, NULL };
+                    char *const argv[] = { "./child.out", socket_path_c_str, NULL };
                     if (execv(argv[0], argv) == -1) std::cout << "Error: Could not create a child process!\n";
                 } else {
                     std::cout << "Ok: child pid is " << child_pid << '\n';
-                    processes.insert(std::tuple(child_id, socket, true));
+                    processes.insert(std::tuple(child_id, true));
                 }
             }
         } else if (command == std::string("exec")) {
@@ -73,9 +82,9 @@ int main() {
 
             if (line.size() > 0) {
                 // set variable in child process
-                std::optional<std::tuple<int, zmq::socket_t*, bool>> data = processes.get_by_id(child_id);
+                std::optional<std::vector<int>> path = processes.get_path_to(child_id);
 
-                if (!data) {
+                if (!path) {
                     std::cout << "Error: No child with id = " << child_id << "!\n";
                     std::cout << "> ";
                     continue;
@@ -83,48 +92,55 @@ int main() {
 
                 std::string value = next(&line);
 
-                std::string msg = "s " + var + " " + value;
+                std::string msg_command = "s " + var + " " + value + '\n';
+                std::string msg;
 
-                zmq::socket_t *socket = std::get<1>(data.value());
+                for (int i = 1; i < path.value().size(); ++i) {
+                    int id = path.value()[i];
+                    msg += std::to_string(id) + ' ';
+                }
+                msg += msg_command;
 
-                socket->send(zmq::buffer(msg), zmq::send_flags::none);
+                std::cout << "MSG = " << msg << '\n';
+
+                root_socket->send(zmq::buffer(msg), zmq::send_flags::none);
 
                 std::thread wait(
-                    [&socket]() {
+                    [&root_socket]() {
                         zmq::message_t request;
-                        socket->recv(request, zmq::recv_flags::none);
+                        root_socket->recv(request, zmq::recv_flags::none);
 
                         std::string message = std::string(static_cast<char*>(request.data()), request.size());
-                        std::cout << "Ok: " << std::get<0>(data.value()) << ": " << message << std::endl;
+                        std::cout << "Ok: " << message << std::endl;
                     }
                 );
                 wait.join();
             } else {
                 // find variable in child process
-                std::optional<std::tuple<int, zmq::socket_t*, bool>> data = processes.get_by_id(child_id);
+                // std::optional<std::tuple<int, zmq::socket_t*, bool>> data = processes.get_by_id(child_id);
 
-                if (!data) {
-                    std::cout << "Error: No child with id = " << child_id << "!\n";
-                    std::cout << "> ";
-                    continue;
-                }
+                // if (!data) {
+                //     std::cout << "Error: No child with id = " << child_id << "!\n";
+                //     std::cout << "> ";
+                //     continue;
+                // }
 
-                std::string msg = "g " + var;
+                // std::string msg = "g " + var + '\n';
 
-                zmq::socket_t *socket = std::get<1>(data.value());
+                // zmq::socket_t *socket = std::get<1>(data.value());
 
-                socket->send(zmq::buffer(msg), zmq::send_flags::none);
+                // socket->send(zmq::buffer(msg), zmq::send_flags::none);
 
-                std::thread wait(
-                    [&socket]() {
-                        zmq::message_t request;
-                        socket->recv(request, zmq::recv_flags::none);
+                // std::thread wait(
+                //     [&socket, &data]() {
+                //         zmq::message_t request;
+                //         socket->recv(request, zmq::recv_flags::none);
 
-                        std::string message = std::string(static_cast<char*>(request.data()), request.size());
-                        std::cout << "Received request in main: " << message << std::endl;
-                    }
-                );
-                wait.join();
+                //         std::string message = std::string(static_cast<char*>(request.data()), request.size());
+                //         std::cout << "Ok: " << std::get<0>(data.value()) << ": " << message << std::endl;
+                //     }
+                // );
+                // wait.join();
             }
         } else if (command == std::string("ping")) {
             int child_id = std::stoi(next(&line));
@@ -140,4 +156,6 @@ int main() {
 
         std::cout << "> ";
     }
+
+    return 0;
 }
