@@ -191,7 +191,7 @@ void test_bin_alloc() {
 
 int main() {
     test_buddy();
-    // test_bin_alloc();
+    test_bin_alloc();
 
     return 0;
 }

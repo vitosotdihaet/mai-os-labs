@@ -149,7 +149,7 @@ void bin_alloc_print(binary_allocator ba) {
     );
 
     if (ba.max_order < 6) {
-        printf("\tblocks = {\n\t");
+        printf("\tblocks = {\n\t\t");
         for (uint64_t i = 0; i < pow2(ba.max_order); ++i) {
             printf("%p, %"PRIu64"; ", ba.blocks[i].memory, ba.blocks[i].taken);
         }
