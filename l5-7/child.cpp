@@ -1,11 +1,18 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include <thread>
+
+#include <chrono>
+using namespace std::chrono_literals;
 
 #include <zmq.hpp>
 
 
+bool waiting = true;
+
 static std::map<std::string, int> var_map;
+
 
 std::string next(std::string* s) {
     size_t i = 0;
@@ -45,16 +52,16 @@ int main(int argc, const char *argv[]) {
 
             if (var_map.find(var) != var_map.end()) {
                 value = var_map.at(var);
-                to_send += var + ": " + std::to_string(value);
+                to_send = "Ok: " + var + ": " + std::to_string(value);
             } else {
-                to_send = var + " not found";
+                to_send = "Ok: " + var + " not found";
             }
         } else if (command[0] == 's') {
             std::string var = next(&s);
             int value = std::stoi(next(&s));
 
             var_map.insert(std::pair(var, value));
-            to_send = var + " is set to " + std::to_string(value);
+            to_send = "Ok: " + var + " is set to " + std::to_string(value);
         } else if (isdigit(command[0])) {
             // getting string: "1 2 3 4 <command>" => send to 1: "2 3 4 <command>"
             // "3 4 <command>" -> "4 <command>" -> "<command>"
@@ -66,10 +73,26 @@ int main(int argc, const char *argv[]) {
 
             next_socket.send(zmq::buffer(s), zmq::send_flags::none);
 
+            // TODO: if wait time is more than 100ms => send Err in to_send
+            waiting = true;
             zmq::message_t request;
-            // TODO: if wait time is more than 100ms => Err
-            next_socket.recv(request, zmq::recv_flags::none);
-            to_send = std::string(static_cast<char*>(request.data()), request.size());
+
+            auto start = std::chrono::steady_clock::now();
+
+            while (true && waiting) {
+                if (next_socket.recv(request, zmq::recv_flags::dontwait)) {
+                    to_send = std::string(static_cast<char*>(request.data()), request.size());
+                    break;
+                }
+        
+
+                if (std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - start) >= 1s) {
+                    to_send = "Err: socket is dead :(";
+                    break;
+                }
+            }
+
+            waiting = false;
         } else {
             run = false;
         }

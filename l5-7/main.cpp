@@ -22,10 +22,15 @@ zmq::socket_t root_socket = zmq::socket_t(ctx, ZMQ_REQ);
 
 void send_msg() {
     zmq::message_t request;
+
     root_socket.recv(request, zmq::recv_flags::none);
 
     std::string message = std::string(static_cast<char*>(request.data()), request.size());
-    std::cout << "Ok: " << message << std::endl;
+    std::cout << message << std::endl;
+
+    // if (message[0] == 'E') {
+    //     processes.get_by_id()
+    // }
 }
 
 std::string next(std::string* s) {
