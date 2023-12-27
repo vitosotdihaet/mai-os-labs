@@ -29,12 +29,12 @@ private:
     void free_(Node* n) {
         if (n->left != nullptr) {
             free_(n->left);
-            free(n->left);
+            delete(n->left);
         }
 
         if (n->right != nullptr) {
             free_(n->right);
-            free(n->right);
+            delete(n->right);
         }
     }
 
@@ -46,19 +46,12 @@ private:
         
         if (id == current_id) return current_path;
         
-        // Traverse the left subtree
         std::optional<std::vector<int>> left = _get_path_to(n->left, id, current_path);
-        if (left) {
-            return left;
-        }
+        if (left) return left;
 
-        // Traverse the right subtree
         std::optional<std::vector<int>> right = _get_path_to(n->right, id, current_path);
-        if (right) {
-            return right;
-        }
+        if (right) return right;
 
-        // If we didn't find the target node in this subtree, remove the current node from the path
         current_path.pop_back();
 
         return std::nullopt;

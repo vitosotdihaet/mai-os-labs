@@ -75,10 +75,7 @@ int main() {
                 if (child_pid == -1) {
                     std::cout << "Error: Could not fork current process!\n";
                 } else if (child_pid == 0) {
-                    char *socket_path_c_str = (char*) calloc(socket_path.size(), sizeof(char));
-                    memcpy(socket_path_c_str, socket_path.c_str(), socket_path.size() * sizeof(char));
-
-                    const char *argv[] = { "./child.out", socket_path_c_str, NULL };
+                    const char *argv[] = { "./child.out", socket_path.c_str(), NULL };
                     if (execv(argv[0], const_cast<char* const*>(argv)) == -1) std::cout << "Error: Could not create a child process!\n";
                 } else {
                     std::cout << "Ok: child pid is " << child_pid << '\n';
