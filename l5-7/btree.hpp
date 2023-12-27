@@ -81,7 +81,7 @@ public:
                 continue;
             }
 
-            for (int j = 0; j < levels[i - 1].size(); ++j) {
+            for (unsigned long j = 0; j < levels[i - 1].size(); ++j) {
                 if (levels[i - 1][j]->left == nullptr) {
                     levels[i - 1][j]->left = new Node(data);
                     levels[i].push_back(levels[i - 1][j]->left);

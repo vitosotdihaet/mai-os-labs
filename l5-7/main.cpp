@@ -27,14 +27,10 @@ void send_msg() {
 
     std::string message = std::string(static_cast<char*>(request.data()), request.size());
     std::cout << message << std::endl;
-
-    // if (message[0] == 'E') {
-    //     processes.get_by_id()
-    // }
 }
 
 std::string next(std::string* s) {
-    int i = 0;
+    unsigned long i = 0;
     for (; i < s->size() && (*s)[i] != ' ' && (*s)[i] != '\n'; ++i) {}
 
     std::string result = s->substr(0, i);
@@ -54,8 +50,8 @@ int main() {
         std::cout << "Error: Could not fork current process!\n";
         return 1;
     } else if (child_pid == 0) {
-        char* argv[] = { "./child.out", "ipc:///tmp/lab5_0", NULL };
-        if (execv(argv[0], argv) == -1) std::cout << "Error: Could not create a child process!\n";
+        const char *argv[] = { "./child.out", "ipc:///tmp/lab5_0", NULL };
+        if (execv(argv[0], const_cast<char* const*>(argv)) == -1) std::cout << "Error: Could not create a child process!\n";
     }
 
     processes.insert(std::tuple(0, true));
@@ -82,8 +78,8 @@ int main() {
                     char *socket_path_c_str = (char*) calloc(socket_path.size(), sizeof(char));
                     memcpy(socket_path_c_str, socket_path.c_str(), socket_path.size() * sizeof(char));
 
-                    char *const argv[] = { "./child.out", socket_path_c_str, NULL };
-                    if (execv(argv[0], argv) == -1) std::cout << "Error: Could not create a child process!\n";
+                    const char *argv[] = { "./child.out", socket_path_c_str, NULL };
+                    if (execv(argv[0], const_cast<char* const*>(argv)) == -1) std::cout << "Error: Could not create a child process!\n";
                 } else {
                     std::cout << "Ok: child pid is " << child_pid << '\n';
                     processes.insert(std::tuple(child_id, true));
@@ -109,7 +105,7 @@ int main() {
                 std::string msg_command = "s " + var + " " + value + '\n';
                 std::string msg;
 
-                for (int i = 1; i < path.value().size(); ++i) {
+                for (unsigned long i = 1; i < path.value().size(); ++i) {
                     int id = path.value()[i];
                     msg += std::to_string(id) + ' ';
                 }
@@ -132,7 +128,7 @@ int main() {
                 std::string msg_command = "g " + var + '\n';
                 std::string msg;
 
-                for (int i = 1; i < path.value().size(); ++i) {
+                for (unsigned long i = 1; i < path.value().size(); ++i) {
                     int id = path.value()[i];
                     msg += std::to_string(id) + ' ';
                 }

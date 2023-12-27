@@ -84,7 +84,6 @@ int main(int argc, const char *argv[]) {
                     to_send = std::string(static_cast<char*>(request.data()), request.size());
                     break;
                 }
-        
 
                 if (std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - start) >= 1s) {
                     to_send = "Err: socket is dead :(";
