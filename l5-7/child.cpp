@@ -35,7 +35,6 @@ int main(int argc, const char *argv[]) {
         socket.recv(request, zmq::recv_flags::none);
 
         std::string s = std::string(static_cast<char*>(request.data()), request.size());
-        std::cout << "Received message: " << s;
         std::string to_send;
 
         std::string command = next(&s);
@@ -61,19 +60,11 @@ int main(int argc, const char *argv[]) {
             // "3 4 <command>" -> "4 <command>" -> "<command>"
 
             std::string next_num = command;
-            std::cout << "next_num = " << next_num << '\n';
 
             zmq::socket_t next_socket = zmq::socket_t(ctx, ZMQ_REQ);
-            next_socket.connect("icp:///tmp/lab5_" + next_num);
+            next_socket.connect("ipc:///tmp/lab5_" + next_num);
 
-            std::string next_next = next(&s);
-            if (isdigit(next_next[0])) {
-                next_socket.send(zmq::buffer("n " + s), zmq::send_flags::none);
-            } else {
-                next_socket.send(zmq::buffer(s), zmq::send_flags::none);
-            }
-
-            std::cout << "MESSAGE SENT!\n";
+            next_socket.send(zmq::buffer(s), zmq::send_flags::none);
 
             zmq::message_t request;
             // TODO: if wait time is more than 100ms => Err

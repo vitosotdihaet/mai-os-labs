@@ -16,6 +16,18 @@
 
 static ProcessTree processes = ProcessTree();
 
+zmq::context_t ctx;
+zmq::socket_t root_socket = zmq::socket_t(ctx, ZMQ_REQ);
+
+
+void send_msg() {
+    zmq::message_t request;
+    root_socket.recv(request, zmq::recv_flags::none);
+
+    std::string message = std::string(static_cast<char*>(request.data()), request.size());
+    std::cout << "Ok: " << message << std::endl;
+}
+
 std::string next(std::string* s) {
     int i = 0;
     for (; i < s->size() && (*s)[i] != ' ' && (*s)[i] != '\n'; ++i) {}
@@ -26,13 +38,10 @@ std::string next(std::string* s) {
     return result;
 }
 
-zmq::context_t ctx;
-zmq::socket_t *root_socket = new zmq::socket_t(ctx, ZMQ_REQ);
-
 
 int main() {
     std::string line = std::string();
-    root_socket->connect("ipc:///tmp/lab5_0");
+    root_socket.connect("ipc:///tmp/lab5_0");
 
     pid_t child_pid = fork();
 
@@ -101,46 +110,33 @@ int main() {
                 }
                 msg += msg_command;
 
-                std::cout << "MSG = " << msg << '\n';
+                root_socket.send(zmq::buffer(msg), zmq::send_flags::none);
 
-                root_socket->send(zmq::buffer(msg), zmq::send_flags::none);
-
-                std::thread wait(
-                    [&root_socket]() {
-                        zmq::message_t request;
-                        root_socket->recv(request, zmq::recv_flags::none);
-
-                        std::string message = std::string(static_cast<char*>(request.data()), request.size());
-                        std::cout << "Ok: " << message << std::endl;
-                    }
-                );
+                std::thread wait(send_msg);
                 wait.join();
             } else {
                 // find variable in child process
-                // std::optional<std::tuple<int, zmq::socket_t*, bool>> data = processes.get_by_id(child_id);
+                std::optional<std::vector<int>> path = processes.get_path_to(child_id);
 
-                // if (!data) {
-                //     std::cout << "Error: No child with id = " << child_id << "!\n";
-                //     std::cout << "> ";
-                //     continue;
-                // }
+                if (!path) {
+                    std::cout << "Error: No child with id = " << child_id << "!\n";
+                    std::cout << "> ";
+                    continue;
+                }
 
-                // std::string msg = "g " + var + '\n';
+                std::string msg_command = "g " + var + '\n';
+                std::string msg;
 
-                // zmq::socket_t *socket = std::get<1>(data.value());
+                for (int i = 1; i < path.value().size(); ++i) {
+                    int id = path.value()[i];
+                    msg += std::to_string(id) + ' ';
+                }
+                msg += msg_command;
 
-                // socket->send(zmq::buffer(msg), zmq::send_flags::none);
+                root_socket.send(zmq::buffer(msg), zmq::send_flags::none);
 
-                // std::thread wait(
-                //     [&socket, &data]() {
-                //         zmq::message_t request;
-                //         socket->recv(request, zmq::recv_flags::none);
-
-                //         std::string message = std::string(static_cast<char*>(request.data()), request.size());
-                //         std::cout << "Ok: " << std::get<0>(data.value()) << ": " << message << std::endl;
-                //     }
-                // );
-                // wait.join();
+                std::thread wait(send_msg);
+                wait.join();
             }
         } else if (command == std::string("ping")) {
             int child_id = std::stoi(next(&line));
