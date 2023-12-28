@@ -125,11 +125,13 @@ void* bin_alloc_allocate(binary_allocator *ba, uint64_t bytes_needed) {
     return result;
 }
 
-void* bin_alloc_deallocate(binary_allocator *ba, void *memory) {
+uint64_t bin_alloc_deallocate(binary_allocator *ba, void *memory) {
     uint64_t block_index = 0;
     for (; block_index < pow2(ba->max_order); ++block_index) if (ba->blocks[block_index].memory == memory) break;
 
     uint64_t order = closest_n_pow2(ba->blocks[block_index].taken);
+    uint64_t result = ba->blocks[block_index].taken;
+
     ba->blocks[block_index].taken = 0;
 
     forward_block *leftmost_free = ba->free_blocks[order];
@@ -140,7 +142,7 @@ void* bin_alloc_deallocate(binary_allocator *ba, void *memory) {
 
     ba->free_blocks[order] = new_block;
 
-    return NULL;
+    return result;
 }
 
 void bin_alloc_print(binary_allocator ba) {

@@ -23,7 +23,7 @@ buddy_allocator* buddy_create(uint64_t byte_count) {
         blocks[i] = b;
     }
 
-
+    //! TODO: CHANGE FREE_BLOCKS FROM ARRAYS TO LINKED LISTS!!!
     block ***free_blocks = (block***) calloc(max_order + 1, sizeof(block**));
     assert(free_blocks != NULL);
 
@@ -118,11 +118,13 @@ void* buddy_allocate(buddy_allocator *ba, uint64_t bytes_needed) {
     return result;
 }
 
-void* buddy_deallocate(buddy_allocator *ba, void *block) {
+uint64_t buddy_deallocate(buddy_allocator *ba, void *block) {
     uint64_t block_index = 0, free_block_index = 0;
     for (; block_index < pow2(ba->max_order); ++block_index) if (ba->blocks[block_index]->memory == block) break;
 
     uint64_t order = closest_n_pow2(ba->blocks[block_index]->taken);
+    uint64_t result = ba->blocks[block_index]->taken;
+
     free_block_index = block_index / pow2(order);
 
     ba->blocks[block_index]->taken = 0;
@@ -134,7 +136,6 @@ void* buddy_deallocate(buddy_allocator *ba, void *block) {
 
     // clamp two blocks into one on higher level
     while (order < ba->max_order) {
-        // todo: fix
         if (free_block_index >= pow2(ba->max_order - order)) break;
 
         if (is_right) {
@@ -157,7 +158,7 @@ void* buddy_deallocate(buddy_allocator *ba, void *block) {
         order++;
     }
 
-    return NULL;
+    return result;
 }
 
 

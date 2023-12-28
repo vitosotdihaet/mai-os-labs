@@ -18,7 +18,7 @@ buddy_allocator* buddy_create_with_block_size(uint64_t block_count, uint64_t blo
 void buddy_destroy(buddy_allocator *ba);
 
 void* buddy_allocate(buddy_allocator *ba, uint64_t bytes_needed);
-void* buddy_deallocate(buddy_allocator *ba, void *block);
+uint64_t buddy_deallocate(buddy_allocator *ba, void *block);
 void buddy_print(buddy_allocator ba);
 
 
