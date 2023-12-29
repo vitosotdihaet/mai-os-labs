@@ -9,17 +9,22 @@
 #include "test.h"
 
 
+int random_seed;
+
 const uint64_t INITIAL_FREE = 1024 * 1024;
 
-uint64_t iterations = 10000;
+uint64_t iterations = 1000;
 
 uint64_t buddy_null_count = 0;
 uint64_t buddy_alloced_count = 0;
 uint64_t buddy_dealloced_count = 0;
+clock_t buddy_time;
+
 
 uint64_t bin_alloc_null_count = 0;
 uint64_t bin_alloc_alloced_count = 0;
 uint64_t bin_alloc_dealloced_count = 0;
+clock_t bin_alloc_time;
 
 
 uint64_t random_to(uint64_t to) {
@@ -173,32 +178,45 @@ void print_results() {
     printf(
         "GLOBALS:\n"
         "--- BUDDY RESULTS ---\n"
+        "took %.10f\n"
         "null_count = %"PRIu64"\n"
         "alloced_count = %"PRIu64"\n"
         "dealloced_count = %"PRIu64"\n\n"
         "--- BIN RESULTS ---\n"
+        "took %.10f\n"
         "null_count = %"PRIu64"\n"
         "alloced_count = %"PRIu64"\n"
         "dealloced_count = %"PRIu64"\n\n",
 
-        buddy_null_count, buddy_alloced_count, buddy_dealloced_count,
-        bin_alloc_null_count, bin_alloc_alloced_count, bin_alloc_dealloced_count
+        ((double) buddy_time) / CLOCKS_PER_SEC, buddy_null_count, buddy_alloced_count, buddy_dealloced_count,
+        ((double) bin_alloc_time) / CLOCKS_PER_SEC, bin_alloc_null_count, bin_alloc_alloced_count, bin_alloc_dealloced_count
     );
 }
 
 void test_same_seed(int test_count) {
+    clock_t start;
+
     for (int i = 0; i < test_count; ++i) {
-        printf("TEST #%d.1\n", i + 1);
-        srand(i);
+        printf("TEST #%d\n", i + 1);
+        srand(random_seed + i);
 
+        start = clock();
         random_memory_buddy(0);
-        random_memory_binary(0);
+        buddy_time += (clock() - start);
 
-        printf("TEST #%d.2\n", i + 1);
-        srand(i);
-
+        start = clock();
         random_memory_binary(0);
+        bin_alloc_time += (clock() - start);
+
+        srand(random_seed + i);
+
+        start = clock();
+        random_memory_binary(0);
+        bin_alloc_time += (clock() - start);
+
+        start = clock();
         random_memory_buddy(0);
+        buddy_time += (clock() - start);
     }
 
     print_results();
@@ -206,7 +224,8 @@ void test_same_seed(int test_count) {
 
 
 int main() {
-    srand(time(NULL));
+    random_seed = time(NULL) % (RAND_MAX / 2);
+    srand(random_seed);
 
     test_same_seed(10);
 
