@@ -1,0 +1,281 @@
+290   execve("./main.out", ["./main.out"], 0x7ffd69fd85b8 /* 43 vars */) = 0
+290   brk(NULL)                         = 0x558b8c4a1000
+290   arch_prctl(0x3001 /* ARCH_??? */, 0x7ffeba41e9b0) = -1 EINVAL (Invalid argument)
+290   mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f5b5e544000
+290   access("/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+290   openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
+290   newfstatat(3, "", {st_mode=S_IFREG|0644, st_size=43527, ...}, AT_EMPTY_PATH) = 0
+290   mmap(NULL, 43527, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f5b5e539000
+290   close(3)                          = 0
+290   openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
+290   read(3, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0P\237\2\0\0\0\0\0"..., 832) = 832
+290   pread64(3, "\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0"..., 784, 64) = 784
+290   pread64(3, "\4\0\0\0 \0\0\0\5\0\0\0GNU\0\2\0\0\300\4\0\0\0\3\0\0\0\0\0\0\0"..., 48, 848) = 48
+290   pread64(3, "\4\0\0\0\24\0\0\0\3\0\0\0GNU\0\244;\374\204(\337f#\315I\214\234\f\256\271\32"..., 68, 896) = 68
+290   newfstatat(3, "", {st_mode=S_IFREG|0755, st_size=2216304, ...}, AT_EMPTY_PATH) = 0
+290   pread64(3, "\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0"..., 784, 64) = 784
+290   mmap(NULL, 2260560, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7f5b5e311000
+290   mmap(0x7f5b5e339000, 1658880, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x28000) = 0x7f5b5e339000
+290   mmap(0x7f5b5e4ce000, 360448, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1bd000) = 0x7f5b5e4ce000
+290   mmap(0x7f5b5e526000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x214000) = 0x7f5b5e526000
+290   mmap(0x7f5b5e52c000, 52816, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7f5b5e52c000
+290   close(3)                          = 0
+290   mmap(NULL, 12288, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f5b5e30e000
+290   arch_prctl(ARCH_SET_FS, 0x7f5b5e30e740) = 0
+290   set_tid_address(0x7f5b5e30ea10)   = 290
+290   set_robust_list(0x7f5b5e30ea20, 24) = 0
+290   rseq(0x7f5b5e30f0e0, 0x20, 0, 0x53053053) = 0
+290   mprotect(0x7f5b5e526000, 16384, PROT_READ) = 0
+290   mprotect(0x558b8bfd5000, 4096, PROT_READ) = 0
+290   mprotect(0x7f5b5e57e000, 8192, PROT_READ) = 0
+290   prlimit64(0, RLIMIT_STACK, NULL, {rlim_cur=8192*1024, rlim_max=RLIM64_INFINITY}) = 0
+290   munmap(0x7f5b5e539000, 43527)     = 0
+290   openat(AT_FDCWD, "/dev/shm/shared_lab3_mem", O_RDWR|O_CREAT|O_TRUNC|O_NOFOLLOW|O_CLOEXEC, 0600) = 3
+290   ftruncate(3, 392)                 = 0
+290   mmap(NULL, 392, PROT_READ|PROT_WRITE, MAP_SHARED, 3, 0) = 0x7f5b5e57d000
+290   newfstatat(1, "", {st_mode=S_IFCHR|0620, st_rdev=makedev(0x88, 0), ...}, AT_EMPTY_PATH) = 0
+290   getrandom("\xf8\x33\xc6\xbc\xa7\x7a\x32\x81", 8, GRND_NONBLOCK) = 8
+290   brk(NULL)                         = 0x558b8c4a1000
+290   brk(0x558b8c4c2000)               = 0x558b8c4c2000
+290   newfstatat(0, "", {st_mode=S_IFCHR|0620, st_rdev=makedev(0x88, 0), ...}, AT_EMPTY_PATH) = 0
+290   write(1, "Input a filename in which you wa"..., 62) = 62
+290   read(0, "c1.txt\n", 1024)         = 7
+290   write(1, "Input a filename in which you wa"..., 62) = 62
+290   read(0, "c2.txt\n", 1024)         = 7
+290   clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f5b5e30ea10) = 291
+291   set_robust_list(0x7f5b5e30ea20, 24 <unfinished ...>
+290   clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD <unfinished ...>
+291   <... set_robust_list resumed>)    = 0
+290   <... clone resumed>, child_tidptr=0x7f5b5e30ea10) = 292
+291   execve("processor.out", ["processor.out", "c1.txt", "1"], 0x7ffeba41eb88 /* 43 vars */ <unfinished ...>
+290   write(1, "Input strings [CTRL+D TO EXIT]:\n", 32 <unfinished ...>
+292   set_robust_list(0x7f5b5e30ea20, 24 <unfinished ...>
+290   <... write resumed>)              = 32
+292   <... set_robust_list resumed>)    = 0
+290   read(0,  <unfinished ...>
+292   execve("processor.out", ["processor.out", "c2.txt", "2"], 0x7ffeba41eb88 /* 43 vars */) = 0
+292   brk(NULL <unfinished ...>
+291   <... execve resumed>)             = 0
+292   <... brk resumed>)                = 0x55761aa3a000
+291   brk(NULL <unfinished ...>
+292   arch_prctl(0x3001 /* ARCH_??? */, 0x7fff01a40f70 <unfinished ...>
+291   <... brk resumed>)                = 0x55f3f54f7000
+292   <... arch_prctl resumed>)         = -1 EINVAL (Invalid argument)
+291   arch_prctl(0x3001 /* ARCH_??? */, 0x7ffe00e847f0 <unfinished ...>
+292   mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0 <unfinished ...>
+291   <... arch_prctl resumed>)         = -1 EINVAL (Invalid argument)
+292   <... mmap resumed>)               = 0x7f6c566db000
+291   mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0 <unfinished ...>
+292   access("/etc/ld.so.preload", R_OK <unfinished ...>
+291   <... mmap resumed>)               = 0x7f71981dd000
+292   <... access resumed>)             = -1 ENOENT (No such file or directory)
+291   access("/etc/ld.so.preload", R_OK <unfinished ...>
+292   openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC <unfinished ...>
+291   <... access resumed>)             = -1 ENOENT (No such file or directory)
+292   <... openat resumed>)             = 3
+291   openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC <unfinished ...>
+292   newfstatat(3, "",  <unfinished ...>
+291   <... openat resumed>)             = 3
+292   <... newfstatat resumed>{st_mode=S_IFREG|0644, st_size=43527, ...}, AT_EMPTY_PATH) = 0
+291   newfstatat(3, "",  <unfinished ...>
+292   mmap(NULL, 43527, PROT_READ, MAP_PRIVATE, 3, 0 <unfinished ...>
+291   <... newfstatat resumed>{st_mode=S_IFREG|0644, st_size=43527, ...}, AT_EMPTY_PATH) = 0
+292   <... mmap resumed>)               = 0x7f6c566d0000
+291   mmap(NULL, 43527, PROT_READ, MAP_PRIVATE, 3, 0 <unfinished ...>
+292   close(3 <unfinished ...>
+291   <... mmap resumed>)               = 0x7f71981d2000
+292   <... close resumed>)              = 0
+291   close(3 <unfinished ...>
+292   openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC <unfinished ...>
+291   <... close resumed>)              = 0
+292   <... openat resumed>)             = 3
+291   openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC <unfinished ...>
+292   read(3,  <unfinished ...>
+291   <... openat resumed>)             = 3
+292   <... read resumed>"\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0P\237\2\0\0\0\0\0"..., 832) = 832
+291   read(3,  <unfinished ...>
+292   pread64(3,  <unfinished ...>
+291   <... read resumed>"\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0P\237\2\0\0\0\0\0"..., 832) = 832
+292   <... pread64 resumed>"\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0"..., 784, 64) = 784
+291   pread64(3,  <unfinished ...>
+292   pread64(3,  <unfinished ...>
+291   <... pread64 resumed>"\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0"..., 784, 64) = 784
+292   <... pread64 resumed>"\4\0\0\0 \0\0\0\5\0\0\0GNU\0\2\0\0\300\4\0\0\0\3\0\0\0\0\0\0\0"..., 48, 848) = 48
+291   pread64(3,  <unfinished ...>
+292   pread64(3,  <unfinished ...>
+291   <... pread64 resumed>"\4\0\0\0 \0\0\0\5\0\0\0GNU\0\2\0\0\300\4\0\0\0\3\0\0\0\0\0\0\0"..., 48, 848) = 48
+292   <... pread64 resumed>"\4\0\0\0\24\0\0\0\3\0\0\0GNU\0\244;\374\204(\337f#\315I\214\234\f\256\271\32"..., 68, 896) = 68
+291   pread64(3,  <unfinished ...>
+292   newfstatat(3, "",  <unfinished ...>
+291   <... pread64 resumed>"\4\0\0\0\24\0\0\0\3\0\0\0GNU\0\244;\374\204(\337f#\315I\214\234\f\256\271\32"..., 68, 896) = 68
+292   <... newfstatat resumed>{st_mode=S_IFREG|0755, st_size=2216304, ...}, AT_EMPTY_PATH) = 0
+291   newfstatat(3, "",  <unfinished ...>
+292   pread64(3,  <unfinished ...>
+291   <... newfstatat resumed>{st_mode=S_IFREG|0755, st_size=2216304, ...}, AT_EMPTY_PATH) = 0
+292   <... pread64 resumed>"\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0"..., 784, 64) = 784
+291   pread64(3,  <unfinished ...>
+292   mmap(NULL, 2260560, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0 <unfinished ...>
+291   <... pread64 resumed>"\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0"..., 784, 64) = 784
+292   <... mmap resumed>)               = 0x7f6c564a8000
+291   mmap(NULL, 2260560, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0 <unfinished ...>
+292   mmap(0x7f6c564d0000, 1658880, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x28000 <unfinished ...>
+291   <... mmap resumed>)               = 0x7f7197faa000
+292   <... mmap resumed>)               = 0x7f6c564d0000
+291   mmap(0x7f7197fd2000, 1658880, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x28000 <unfinished ...>
+292   mmap(0x7f6c56665000, 360448, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1bd000 <unfinished ...>
+291   <... mmap resumed>)               = 0x7f7197fd2000
+292   <... mmap resumed>)               = 0x7f6c56665000
+291   mmap(0x7f7198167000, 360448, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1bd000 <unfinished ...>
+292   mmap(0x7f6c566bd000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x214000 <unfinished ...>
+291   <... mmap resumed>)               = 0x7f7198167000
+292   <... mmap resumed>)               = 0x7f6c566bd000
+291   mmap(0x7f71981bf000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x214000 <unfinished ...>
+292   mmap(0x7f6c566c3000, 52816, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0 <unfinished ...>
+291   <... mmap resumed>)               = 0x7f71981bf000
+292   <... mmap resumed>)               = 0x7f6c566c3000
+291   mmap(0x7f71981c5000, 52816, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0 <unfinished ...>
+292   close(3 <unfinished ...>
+291   <... mmap resumed>)               = 0x7f71981c5000
+292   <... close resumed>)              = 0
+291   close(3 <unfinished ...>
+292   mmap(NULL, 12288, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0 <unfinished ...>
+291   <... close resumed>)              = 0
+292   <... mmap resumed>)               = 0x7f6c564a5000
+291   mmap(NULL, 12288, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0 <unfinished ...>
+292   arch_prctl(ARCH_SET_FS, 0x7f6c564a5740 <unfinished ...>
+291   <... mmap resumed>)               = 0x7f7197fa7000
+292   <... arch_prctl resumed>)         = 0
+291   arch_prctl(ARCH_SET_FS, 0x7f7197fa7740 <unfinished ...>
+292   set_tid_address(0x7f6c564a5a10 <unfinished ...>
+291   <... arch_prctl resumed>)         = 0
+292   <... set_tid_address resumed>)    = 292
+291   set_tid_address(0x7f7197fa7a10 <unfinished ...>
+292   set_robust_list(0x7f6c564a5a20, 24 <unfinished ...>
+291   <... set_tid_address resumed>)    = 291
+292   <... set_robust_list resumed>)    = 0
+291   set_robust_list(0x7f7197fa7a20, 24 <unfinished ...>
+292   rseq(0x7f6c564a60e0, 0x20, 0, 0x53053053 <unfinished ...>
+291   <... set_robust_list resumed>)    = 0
+292   <... rseq resumed>)               = 0
+291   rseq(0x7f7197fa80e0, 0x20, 0, 0x53053053 <unfinished ...>
+292   mprotect(0x7f6c566bd000, 16384, PROT_READ <unfinished ...>
+291   <... rseq resumed>)               = 0
+292   <... mprotect resumed>)           = 0
+291   mprotect(0x7f71981bf000, 16384, PROT_READ <unfinished ...>
+292   mprotect(0x55761a938000, 4096, PROT_READ <unfinished ...>
+291   <... mprotect resumed>)           = 0
+292   <... mprotect resumed>)           = 0
+291   mprotect(0x55f3f3c6a000, 4096, PROT_READ <unfinished ...>
+292   mprotect(0x7f6c56715000, 8192, PROT_READ <unfinished ...>
+291   <... mprotect resumed>)           = 0
+292   <... mprotect resumed>)           = 0
+291   mprotect(0x7f7198217000, 8192, PROT_READ <unfinished ...>
+292   prlimit64(0, RLIMIT_STACK, NULL,  <unfinished ...>
+291   <... mprotect resumed>)           = 0
+292   <... prlimit64 resumed>{rlim_cur=8192*1024, rlim_max=RLIM64_INFINITY}) = 0
+291   prlimit64(0, RLIMIT_STACK, NULL,  <unfinished ...>
+292   munmap(0x7f6c566d0000, 43527 <unfinished ...>
+291   <... prlimit64 resumed>{rlim_cur=8192*1024, rlim_max=RLIM64_INFINITY}) = 0
+292   <... munmap resumed>)             = 0
+291   munmap(0x7f71981d2000, 43527 <unfinished ...>
+292   getrandom( <unfinished ...>
+291   <... munmap resumed>)             = 0
+292   <... getrandom resumed>"\xdb\x65\x1d\x43\x7a\xc9\x17\x68", 8, GRND_NONBLOCK) = 8
+291   getrandom( <unfinished ...>
+292   brk(NULL <unfinished ...>
+291   <... getrandom resumed>"\x38\xfd\x19\x52\x99\x56\xa1\xeb", 8, GRND_NONBLOCK) = 8
+292   <... brk resumed>)                = 0x55761aa3a000
+291   brk(NULL <unfinished ...>
+292   brk(0x55761aa5b000 <unfinished ...>
+291   <... brk resumed>)                = 0x55f3f54f7000
+292   <... brk resumed>)                = 0x55761aa5b000
+291   brk(0x55f3f5518000 <unfinished ...>
+292   openat(AT_FDCWD, "c2.txt", O_RDWR|O_CREAT|O_TRUNC, 0666 <unfinished ...>
+291   <... brk resumed>)                = 0x55f3f5518000
+291   openat(AT_FDCWD, "c1.txt", O_RDWR|O_CREAT|O_TRUNC, 0666 <unfinished ...>
+292   <... openat resumed>)             = 3
+292   openat(AT_FDCWD, "/dev/shm/shared_lab3_mem", O_RDWR|O_NOFOLLOW|O_CLOEXEC) = 4
+292   mmap(NULL, 392, PROT_READ|PROT_WRITE, MAP_SHARED, 4, 0) = 0x7f6c56714000
+291   <... openat resumed>)             = 3
+292   futex(0x7f6c56714120, FUTEX_WAIT_BITSET|FUTEX_CLOCK_REALTIME, 0, NULL, FUTEX_BITSET_MATCH_ANY <unfinished ...>
+291   openat(AT_FDCWD, "/dev/shm/shared_lab3_mem", O_RDWR|O_NOFOLLOW|O_CLOEXEC) = 4
+291   mmap(NULL, 392, PROT_READ|PROT_WRITE, MAP_SHARED, 4, 0) = 0x7f7198216000
+291   futex(0x7f7198216100, FUTEX_WAIT_BITSET|FUTEX_CLOCK_REALTIME, 0, NULL, FUTEX_BITSET_MATCH_ANY <unfinished ...>
+290   <... read resumed>"hellothere\n", 1024) = 11
+290   futex(0x7f5b5e57d100, FUTEX_WAKE, 1) = 1
+291   <... futex resumed>)              = 0
+290   futex(0x7f5b5e57d120, FUTEX_WAKE, 1 <unfinished ...>
+291   futex(0x7f7198216100, FUTEX_WAIT_BITSET|FUTEX_CLOCK_REALTIME, 0, NULL, FUTEX_BITSET_MATCH_ANY <unfinished ...>
+290   <... futex resumed>)              = 1
+292   <... futex resumed>)              = 0
+290   futex(0x7f5b5e57d160, FUTEX_WAIT_BITSET|FUTEX_CLOCK_REALTIME, 0, NULL, FUTEX_BITSET_MATCH_ANY <unfinished ...>
+292   newfstatat(1, "", {st_mode=S_IFCHR|0620, st_rdev=makedev(0x88, 0), ...}, AT_EMPTY_PATH) = 0
+292   write(1, "String after removing vowels 2: "..., 39) = 39
+292   newfstatat(3, "", {st_mode=S_IFREG|0777, st_size=0, ...}, AT_EMPTY_PATH) = 0
+292   futex(0x7f6c56714160, FUTEX_WAKE, 1 <unfinished ...>
+290   <... futex resumed>)              = 0
+292   <... futex resumed>)              = 1
+290   read(0,  <unfinished ...>
+292   futex(0x7f6c56714120, FUTEX_WAIT_BITSET|FUTEX_CLOCK_REALTIME, 0, NULL, FUTEX_BITSET_MATCH_ANY <unfinished ...>
+290   <... read resumed>"imyourworldbro\n", 1024) = 15
+290   futex(0x7f5b5e57d100, FUTEX_WAKE, 1) = 1
+291   <... futex resumed>)              = 0
+290   futex(0x7f5b5e57d120, FUTEX_WAKE, 1 <unfinished ...>
+291   futex(0x7f7198216100, FUTEX_WAIT_BITSET|FUTEX_CLOCK_REALTIME, 0, NULL, FUTEX_BITSET_MATCH_ANY <unfinished ...>
+290   <... futex resumed>)              = 1
+292   <... futex resumed>)              = 0
+290   futex(0x7f5b5e57d160, FUTEX_WAIT_BITSET|FUTEX_CLOCK_REALTIME, 0, NULL, FUTEX_BITSET_MATCH_ANY <unfinished ...>
+292   write(1, "String after removing vowels 2: "..., 42) = 42
+292   futex(0x7f6c56714160, FUTEX_WAKE, 1 <unfinished ...>
+290   <... futex resumed>)              = 0
+292   <... futex resumed>)              = 1
+290   read(0,  <unfinished ...>
+292   futex(0x7f6c56714120, FUTEX_WAIT_BITSET|FUTEX_CLOCK_REALTIME, 0, NULL, FUTEX_BITSET_MATCH_ANY <unfinished ...>
+290   <... read resumed>"bye\n", 1024)  = 4
+290   futex(0x7f5b5e57d100, FUTEX_WAKE, 1) = 1
+291   <... futex resumed>)              = 0
+290   futex(0x7f5b5e57d120, FUTEX_WAKE, 1 <unfinished ...>
+291   newfstatat(1, "",  <unfinished ...>
+290   <... futex resumed>)              = 1
+292   <... futex resumed>)              = 0
+290   futex(0x7f5b5e57d140, FUTEX_WAIT_BITSET|FUTEX_CLOCK_REALTIME, 0, NULL, FUTEX_BITSET_MATCH_ANY <unfinished ...>
+291   <... newfstatat resumed>{st_mode=S_IFCHR|0620, st_rdev=makedev(0x88, 0), ...}, AT_EMPTY_PATH) = 0
+292   futex(0x7f6c56714120, FUTEX_WAIT_BITSET|FUTEX_CLOCK_REALTIME, 0, NULL, FUTEX_BITSET_MATCH_ANY <unfinished ...>
+291   write(1, "String after removing vowels 1: "..., 35) = 35
+291   newfstatat(3, "", {st_mode=S_IFREG|0777, st_size=0, ...}, AT_EMPTY_PATH) = 0
+291   futex(0x7f7198216140, FUTEX_WAKE, 1 <unfinished ...>
+290   <... futex resumed>)              = 0
+291   <... futex resumed>)              = 1
+290   read(0,  <unfinished ...>
+291   futex(0x7f7198216100, FUTEX_WAIT_BITSET|FUTEX_CLOCK_REALTIME, 0, NULL, FUTEX_BITSET_MATCH_ANY <unfinished ...>
+290   <... read resumed>"", 1024)       = 0
+290   futex(0x7f5b5e57d100, FUTEX_WAKE, 1) = 1
+291   <... futex resumed>)              = 0
+290   futex(0x7f5b5e57d120, FUTEX_WAKE, 1 <unfinished ...>
+291   write(3, "by\n", 3 <unfinished ...>
+290   <... futex resumed>)              = 1
+292   <... futex resumed>)              = 0
+290   futex(0x7f5b5e57d160, FUTEX_WAIT_BITSET|FUTEX_CLOCK_REALTIME, 0, NULL, FUTEX_BITSET_MATCH_ANY <unfinished ...>
+291   <... write resumed>)              = 3
+290   <... futex resumed>)              = -1 EAGAIN (Resource temporarily unavailable)
+292   futex(0x7f6c56714160, FUTEX_WAKE, 1 <unfinished ...>
+290   munmap(0x7f5b5e57d000, 392 <unfinished ...>
+291   close(3 <unfinished ...>
+290   <... munmap resumed>)             = 0
+292   <... futex resumed>)              = 0
+290   unlink("/dev/shm/shared_lab3_mem" <unfinished ...>
+292   write(3, "hllthr\nmyrwrldbr\n", 17 <unfinished ...>
+291   <... close resumed>)              = 0
+290   <... unlink resumed>)             = 0
+292   <... write resumed>)              = 17
+291   exit_group(0 <unfinished ...>
+290   exit_group(0 <unfinished ...>
+292   close(3 <unfinished ...>
+290   <... exit_group resumed>)         = ?
+291   <... exit_group resumed>)         = ?
+292   <... close resumed>)              = 0
+291   +++ exited with 0 +++
+292   exit_group(0 <unfinished ...>
+290   +++ exited with 0 +++
+292   <... exit_group resumed>)         = ?
+292   +++ exited with 0 +++

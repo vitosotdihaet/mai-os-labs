@@ -3,7 +3,6 @@ CFLAGS = -Wall -Wextra
 
 main: string.o processor
 	$(CC) $(CFLAGS) -g -o main.out main.c string.o -lrt
-	./main.out
 
 processor: string.o
 	$(CC) $(CFLAGS) -g -o processor.out processor.c string.o -lrt

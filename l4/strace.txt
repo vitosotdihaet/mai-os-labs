@@ -1,0 +1,93 @@
+320   execve("./main.out", ["./main.out"], 0x7ffee6d3d088 /* 43 vars */) = 0
+320   brk(NULL)                         = 0x55e178c73000
+320   arch_prctl(0x3001 /* ARCH_??? */, 0x7fff28481050) = -1 EINVAL (Invalid argument)
+320   mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7fcc89cdc000
+320   access("/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
+320   openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
+320   newfstatat(3, "", {st_mode=S_IFREG|0644, st_size=43527, ...}, AT_EMPTY_PATH) = 0
+320   mmap(NULL, 43527, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7fcc89cd1000
+320   close(3)                          = 0
+320   openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
+320   read(3, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0P\237\2\0\0\0\0\0"..., 832) = 832
+320   pread64(3, "\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0"..., 784, 64) = 784
+320   pread64(3, "\4\0\0\0 \0\0\0\5\0\0\0GNU\0\2\0\0\300\4\0\0\0\3\0\0\0\0\0\0\0"..., 48, 848) = 48
+320   pread64(3, "\4\0\0\0\24\0\0\0\3\0\0\0GNU\0\244;\374\204(\337f#\315I\214\234\f\256\271\32"..., 68, 896) = 68
+320   newfstatat(3, "", {st_mode=S_IFREG|0755, st_size=2216304, ...}, AT_EMPTY_PATH) = 0
+320   pread64(3, "\6\0\0\0\4\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0@\0\0\0\0\0\0\0"..., 784, 64) = 784
+320   mmap(NULL, 2260560, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7fcc89aa9000
+320   mmap(0x7fcc89ad1000, 1658880, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x28000) = 0x7fcc89ad1000
+320   mmap(0x7fcc89c66000, 360448, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1bd000) = 0x7fcc89c66000
+320   mmap(0x7fcc89cbe000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x214000) = 0x7fcc89cbe000
+320   mmap(0x7fcc89cc4000, 52816, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7fcc89cc4000
+320   close(3)                          = 0
+320   mmap(NULL, 12288, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7fcc89aa6000
+320   arch_prctl(ARCH_SET_FS, 0x7fcc89aa6740) = 0
+320   set_tid_address(0x7fcc89aa6a10)   = 320
+320   set_robust_list(0x7fcc89aa6a20, 24) = 0
+320   rseq(0x7fcc89aa70e0, 0x20, 0, 0x53053053) = 0
+320   mprotect(0x7fcc89cbe000, 16384, PROT_READ) = 0
+320   mprotect(0x55e1778a5000, 4096, PROT_READ) = 0
+320   mprotect(0x7fcc89d16000, 8192, PROT_READ) = 0
+320   prlimit64(0, RLIMIT_STACK, NULL, {rlim_cur=8192*1024, rlim_max=RLIM64_INFINITY}) = 0
+320   munmap(0x7fcc89cd1000, 43527)     = 0
+320   getrandom("\x6e\x96\x07\x9e\x86\x02\x8f\xf1", 8, GRND_NONBLOCK) = 8
+320   brk(NULL)                         = 0x55e178c73000
+320   brk(0x55e178c94000)               = 0x55e178c94000
+320   openat(AT_FDCWD, "./libimpl1.so", O_RDONLY|O_CLOEXEC) = 3
+320   read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\0\0\0\0\0\0\0\0"..., 832) = 832
+320   newfstatat(3, "", {st_mode=S_IFREG|0777, st_size=15704, ...}, AT_EMPTY_PATH) = 0
+320   getcwd("/mnt/c/important/docs/mai/os/l4", 128) = 32
+320   mmap(NULL, 16440, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7fcc89cd7000
+320   mmap(0x7fcc89cd8000, 4096, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1000) = 0x7fcc89cd8000
+320   mmap(0x7fcc89cd9000, 4096, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x2000) = 0x7fcc89cd9000
+320   mmap(0x7fcc89cda000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x2000) = 0x7fcc89cda000
+320   close(3)                          = 0
+320   mprotect(0x7fcc89cda000, 4096, PROT_READ) = 0
+320   newfstatat(1, "", {st_mode=S_IFCHR|0620, st_rdev=makedev(0x88, 0), ...}, AT_EMPTY_PATH) = 0
+320   write(1, "Usage:\n", 7)           = 7
+320   write(1, "\t\10-1 - exit\n", 12)  = 12
+320   write(1, "\t0 - change implementation\n", 27) = 27
+320   write(1, "\t1 - count primes\n", 18) = 18
+320   write(1, "\t2 - rebase a number\n", 21) = 21
+320   newfstatat(0, "", {st_mode=S_IFCHR|0620, st_rdev=makedev(0x88, 0), ...}, AT_EMPTY_PATH) = 0
+320   write(1, "Command: ", 9)          = 9
+320   read(0, "1\n", 1024)              = 2
+320   write(1, "Input A and B to find out how ma"..., 57) = 57
+320   write(1, "\tA: ", 4)              = 4
+320   read(0, "1 20\n", 1024)           = 5
+320   write(1, "\tB: There are 8 primes in [1, 20"..., 35) = 35
+320   write(1, "Usage:\n\t\10-1 - exit\n\t0 - change i"..., 85) = 85
+320   write(1, "Command: ", 9)          = 9
+320   read(0, "0\n", 1024)              = 2
+320   munmap(0x7fcc89cd7000, 16440)     = 0
+320   openat(AT_FDCWD, "./libimpl2.so", O_RDONLY|O_CLOEXEC) = 3
+320   read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\0\0\0\0\0\0\0\0"..., 832) = 832
+320   newfstatat(3, "", {st_mode=S_IFREG|0777, st_size=15536, ...}, AT_EMPTY_PATH) = 0
+320   getcwd("/mnt/c/important/docs/mai/os/l4", 128) = 32
+320   mmap(NULL, 16432, PROT_READ, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7fcc89cd7000
+320   mmap(0x7fcc89cd8000, 4096, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1000) = 0x7fcc89cd8000
+320   mmap(0x7fcc89cd9000, 4096, PROT_READ, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x2000) = 0x7fcc89cd9000
+320   mmap(0x7fcc89cda000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x2000) = 0x7fcc89cda000
+320   close(3)                          = 0
+320   mprotect(0x7fcc89cda000, 4096, PROT_READ) = 0
+320   write(1, "Usage:\n\t\10-1 - exit\n\t0 - change i"..., 85) = 85
+320   write(1, "Command: ", 9)          = 9
+320   read(0, "1\n", 1024)              = 2
+320   write(1, "Input A and B to find out how ma"..., 57) = 57
+320   write(1, "\tA: ", 4)              = 4
+320   read(0, "1\n", 1024)              = 2
+320   write(1, "\tB: ", 4)              = 4
+320   read(0, "20\n", 1024)             = 3
+320   write(1, "There are 8 primes in [1, 20]!\n", 31) = 31
+320   write(1, "Usage:\n\t\10-1 - exit\n\t0 - change i"..., 85) = 85
+320   write(1, "Command: ", 9)          = 9
+320   read(0, "2\n", 1024)              = 2
+320   write(1, "Input a number you want to rebas"..., 45) = 45
+320   read(0, "123\n", 1024)            = 4
+320   write(1, "The 123 in base 3 is 11120!\n", 28) = 28
+320   write(1, "Usage:\n\t\10-1 - exit\n\t0 - change i"..., 85) = 85
+320   write(1, "Command: ", 9)          = 9
+320   read(0, "-1\n", 1024)             = 3
+320   lseek(0, -1, SEEK_CUR)            = -1 ESPIPE (Illegal seek)
+320   exit_group(0)                     = ?
+320   +++ exited with 0 +++

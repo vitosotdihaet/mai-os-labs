@@ -23,6 +23,7 @@ uint64_t bin_alloc_dealloced_count = 0;
 
 
 uint64_t random_to(uint64_t to) {
+    if (!to) return 0;
     return rand() % to + 1;
 }
 
@@ -66,7 +67,7 @@ void random_memory_buddy(int print) {
     for (uint64_t i = 0; i < iterations; ++i) {
         if (print && i % (iterations / 10) == 0) printf("i = %"PRIu64"\n", i);
 
-        if (current_alloced == 0 || (rand() > RAND_MAX / 2 && free_count > 0)) {
+        if (current_alloced == 0 || (free_count > 0 && rand() > RAND_MAX / 4)) {
             uint64_t byte_count = pow2(random_to(closest_n_pow2(free_count / 2)));
 
             void *mem = buddy_allocate(b, byte_count);
@@ -122,7 +123,7 @@ void random_memory_binary(int print) {
     for (uint64_t i = 0; i < iterations; ++i) {
         if (print && i % (iterations / 10) == 0) printf("i = %"PRIu64"\n", i);
 
-        if (current_alloced == 0 || (rand() > RAND_MAX / 2 && free_count > 0)) {
+        if (current_alloced == 0 || (free_count > 0 && rand() > RAND_MAX / 4)) {
             uint64_t byte_count = pow2(random_to(closest_n_pow2(free_count / 2)));
 
             void *mem = bin_alloc_allocate(b, byte_count);
