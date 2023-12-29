@@ -9,7 +9,7 @@
 #include "test.h"
 
 
-const uint64_t INITIAL_FREE = 32 * 1024 * 1024;
+const uint64_t INITIAL_FREE = 1024 * 1024;
 
 uint64_t iterations = 1000;
 
@@ -167,10 +167,7 @@ void random_memory_binary(int print) {
 }
 
 
-test_same_seed(int test_count) {
-    
-
-
+void test_same_seed(int test_count) {
     for (int i = 0; i < test_count; ++i) {
         // printf("TEST #%d.1\n\n", i + 1);
         srand(i);
