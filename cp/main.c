@@ -11,7 +11,7 @@
 
 const uint64_t INITIAL_FREE = 1024 * 1024;
 
-uint64_t iterations = 1000;
+uint64_t iterations = 10000;
 
 uint64_t buddy_null_count = 0;
 uint64_t buddy_alloced_count = 0;
@@ -160,6 +160,8 @@ void random_memory_binary(int print) {
 
             previous->next = next;
         }
+
+        // bin_alloc_print(*b);
     }
 
     free_forward_memory(alloced);
@@ -167,52 +169,7 @@ void random_memory_binary(int print) {
     bin_alloc_destroy(b);
 }
 
-
-void test_same_seed(int test_count) {
-    for (int i = 0; i < test_count; ++i) {
-        // printf("TEST #%d.1\n\n", i + 1);
-        srand(i);
-
-        random_memory_buddy(0);
-        // printf(
-        //     "--- BUDDY RESULTS ---\n"
-        //     "null_count = %"PRIu64"\n"
-        //     "alloced_count = %"PRIu64"\n"
-        //     "dealloced_count = %"PRIu64"\n\n",
-        //     null_count, alloced_count, dealloced_count
-        // );
-
-        random_memory_binary(0);
-        // printf(
-        //     "--- BIN RESULTS ---\n"
-        //     "null_count = %"PRIu64"\n"
-        //     "alloced_count = %"PRIu64"\n"
-        //     "dealloced_count = %"PRIu64"\n\n",
-        //     null_count, alloced_count, dealloced_count
-        // );
-
-        // printf("TEST #%d.2\n\n", i + 1);
-        srand(i);
-
-        random_memory_binary(0);
-        // printf(
-        //     "--- BIN RESULTS ---\n"
-        //     "null_count = %"PRIu64"\n"
-        //     "alloced_count = %"PRIu64"\n"
-        //     "dealloced_count = %"PRIu64"\n\n",
-        //     null_count, alloced_count, dealloced_count
-        // );
-
-        random_memory_buddy(0);
-        // printf(
-        //     "--- BUDDY RESULTS ---\n"
-        //     "null_count = %"PRIu64"\n"
-        //     "alloced_count = %"PRIu64"\n"
-        //     "dealloced_count = %"PRIu64"\n\n",
-        //     null_count, alloced_count, dealloced_count
-        // );
-    }
-
+void print_results() {
     printf(
         "GLOBALS:\n"
         "--- BUDDY RESULTS ---\n"
@@ -227,6 +184,24 @@ void test_same_seed(int test_count) {
         buddy_null_count, buddy_alloced_count, buddy_dealloced_count,
         bin_alloc_null_count, bin_alloc_alloced_count, bin_alloc_dealloced_count
     );
+}
+
+void test_same_seed(int test_count) {
+    for (int i = 0; i < test_count; ++i) {
+        printf("TEST #%d.1\n", i + 1);
+        srand(i);
+
+        random_memory_buddy(0);
+        random_memory_binary(0);
+
+        printf("TEST #%d.2\n", i + 1);
+        srand(i);
+
+        random_memory_binary(0);
+        random_memory_buddy(0);
+    }
+
+    print_results();
 }
 
 

@@ -9,6 +9,7 @@ uint64_t closest_pow2(uint64_t n) {
 }
 
 uint64_t closest_n_pow2(uint64_t n) {
+    if (!n) return 0;
     n -= 1;
     uint64_t result = 0;
     for (; n != 0; n /= 2) result += 1;

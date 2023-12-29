@@ -46,8 +46,8 @@ void bin_alloc_destroy(binary_allocator *ba) {
     free(ba->blocks[0].memory);
     free(ba->blocks);
 
-    for (uint64_t i = ba->max_order + 1; i > 1; --i) {
-        recursive_free_forward_memory(ba->free_blocks[i - 1]);   
+    for (uint64_t i = 0; i <= ba->max_order; ++i) {
+        recursive_free_forward_memory(ba->free_blocks[i]);   
     }
     free(ba->free_blocks);
 
@@ -55,6 +55,7 @@ void bin_alloc_destroy(binary_allocator *ba) {
 }
 
 void* bin_alloc_divide_block(binary_allocator *ba, uint64_t order, uint64_t bytes_needed) {
+    if (order == 0 || order > ba->max_order) return NULL;
     void *result = NULL;
 
     void *memory1 = ba->free_blocks[order]->memory;
@@ -93,30 +94,30 @@ void* bin_alloc_divide_block(binary_allocator *ba, uint64_t order, uint64_t byte
 }
 
 void* bin_alloc_allocate(binary_allocator *ba, uint64_t bytes_needed) {
-    void *result = NULL;
     bytes_needed = closest_pow2(bytes_needed);
+    uint64_t order = closest_n_pow2(bytes_needed);
 
-    for (uint64_t i = 0; i <= ba->max_order; ++i) {
-        if (ba->free_blocks[i] == NULL) continue;
+    forward_memory *current_fm = ba->free_blocks[order];
 
-        if (pow2(i) > bytes_needed) {
-            return bin_alloc_divide_block(ba, i, bytes_needed);
-        } else if (pow2(i) == bytes_needed) {
-            result = ba->free_blocks[i]->memory;
+    if (current_fm != NULL) {
+        uint64_t block_index = 0;
+        for (; block_index < pow2(ba->max_order); ++block_index) if (ba->blocks[block_index].memory == current_fm->memory) break;
+        ba->blocks[block_index].taken = bytes_needed;
 
-            uint64_t block_index = 0;
-            for (; block_index < pow2(ba->max_order); ++block_index) if (ba->blocks[block_index].memory == result) break;
-            ba->blocks[block_index].taken = bytes_needed;
+        forward_memory *next = current_fm->next;
+        void *memory = current_fm->memory;
 
-            forward_memory *next = ba->free_blocks[i]->next;
-            free(ba->free_blocks[i]);
-            ba->free_blocks[i] = next;
+        ba->free_blocks[order] = next;
 
-            return result;
-        }
+        free(current_fm);
+
+        return memory;
     }
 
-    return result;
+    while (order <= ba->max_order && ba->free_blocks[order] == NULL) ++order;
+    if (order > ba->max_order) return NULL;
+
+    return bin_alloc_divide_block(ba, order, bytes_needed);
 }
 
 uint64_t bin_alloc_deallocate(binary_allocator *ba, void *memory) {
@@ -133,7 +134,6 @@ uint64_t bin_alloc_deallocate(binary_allocator *ba, void *memory) {
     forward_memory *new_block = calloc(1, sizeof(forward_memory));
     new_block->memory = memory;
     new_block->next = leftmost_free;
-
     ba->free_blocks[order] = new_block;
 
     return result;
