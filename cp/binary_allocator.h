@@ -5,14 +5,9 @@
 #include <stdbool.h>
 
 
-typedef struct fb {
-    void *memory;
-    struct fb *next;
-} forward_block;
-
 typedef struct {
     block *blocks;
-    forward_block **free_blocks; // ith element is a forward-list of memory with capacity 2^i
+    forward_memory **free_blocks; // ith element is a forward-list of memory with capacity 2^i
     uint64_t max_order;
 } binary_allocator;
 
@@ -21,7 +16,6 @@ free_blocks:
 capacity = 2^0: [*, ->][*, ->]0
 capacity = 2^1: [*, ->]0
 */
-
 
 binary_allocator* bin_alloc_create(uint64_t byte_count);
 binary_allocator* bin_alloc_create_with_block_size(uint64_t block_count, uint64_t block_size);

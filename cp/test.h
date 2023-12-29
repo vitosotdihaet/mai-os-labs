@@ -14,6 +14,8 @@ void test_buddy() {
 
     printf("\nALLOC'D ARR1: arr1[0] = %d!\n\n", arr1[0]);
 
+    buddy_print(*buda);
+
 
     int n = 25;
 
@@ -46,27 +48,29 @@ void test_buddy() {
     }
     printf("\b\b \b\n\n");
 
+    n = 25;
 
-    buddy_deallocate(buda, arr_big);
+    buddy_deallocate(buda, arr_big, sizeof(char) * n);
     printf("\nDEALLOC'D ARR_BIG!\n\n");
     buddy_print(*buda);
 
+    n = 10;
+
     for (int i = 0; i < n; ++i) {
         printf("\nDEALLOC'D INT_ARR[%d]:\n\n", i);
-        buddy_deallocate(buda, int_arr[i]);
+        buddy_deallocate(buda, int_arr[i], sizeof(int) * n);
         buddy_print(*buda);
     }
-    buddy_deallocate(buda, int_arr);
+    buddy_deallocate(buda, int_arr, sizeof(int*) * n);
     printf("\nDEALLOC'D INT_ARR:\n\n");
     buddy_print(*buda);
 
-    buddy_deallocate(buda, arr1);
+    buddy_deallocate(buda, arr1, sizeof(int));
     printf("\nDEALLOC'D ARR1:\n\n");
     buddy_print(*buda);
 
 
     buddy_destroy(buda);
-    free(buda);
 
 
     printf("\n--------------- BUDDY ALLOCATOR SMOL TEST ---------------\n\n");
@@ -86,17 +90,16 @@ void test_buddy() {
     buddy_print(*buda2);
 
 
-    buddy_deallocate(buda2, new_arr1);
+    buddy_deallocate(buda2, new_arr1, sizeof(int));
     printf("\nDEALLOC'D ARR1!\n\n");
     buddy_print(*buda2);
 
-    buddy_deallocate(buda2, arr2);
+    buddy_deallocate(buda2, arr2, sizeof(int));
     printf("\nDEALLOC'D ARR2!\n\n");
     buddy_print(*buda2);
 
 
     buddy_destroy(buda2);
-    free(buda2);
 }
 
 void test_bin_alloc() {
@@ -155,7 +158,6 @@ void test_bin_alloc() {
     bin_alloc_print(*bina);
 
     bin_alloc_destroy(bina);
-    free(bina);
 
 
     printf("\n--------------- BINARY ALLOCATOR SMOL TEST ---------------\n\n");
@@ -185,5 +187,4 @@ void test_bin_alloc() {
 
 
     bin_alloc_destroy(bina2);
-    free(bina2);
 }

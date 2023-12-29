@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <assert.h>
 
 #include "binary_allocator.h"
@@ -23,10 +22,10 @@ binary_allocator* bin_alloc_create(uint64_t byte_count) {
     }
 
 
-    forward_block **free_blocks = (forward_block**) calloc(max_order + 1, sizeof(forward_block*));
+    forward_memory **free_blocks = (forward_memory**) calloc(max_order + 1, sizeof(forward_memory*));
     assert(free_blocks != NULL);
 
-    free_blocks[max_order] = calloc(1, sizeof(forward_block));
+    free_blocks[max_order] = calloc(1, sizeof(forward_memory));
     assert(free_blocks[max_order] != NULL);
     free_blocks[max_order]->memory = memory;
 
@@ -43,21 +42,16 @@ binary_allocator* bin_alloc_create_with_block_size(uint64_t block_count, uint64_
     return bin_alloc_create(block_count * block_size);
 }
 
-void recursive_free_forward_block(forward_block *block) {
-    if (block == NULL) return;
-
-    recursive_free_forward_block(block->next);
-    free(block);
-}
-
 void bin_alloc_destroy(binary_allocator *ba) {
     free(ba->blocks[0].memory);
     free(ba->blocks);
 
     for (uint64_t i = ba->max_order + 1; i > 1; --i) {
-        recursive_free_forward_block(ba->free_blocks[i - 1]);   
+        recursive_free_forward_memory(ba->free_blocks[i - 1]);   
     }
     free(ba->free_blocks);
+
+    free(ba);
 }
 
 void* bin_alloc_divide_block(binary_allocator *ba, uint64_t order, uint64_t bytes_needed) {
@@ -69,17 +63,17 @@ void* bin_alloc_divide_block(binary_allocator *ba, uint64_t order, uint64_t byte
     uint64_t block_index = 0;
     for (; block_index < pow2(ba->max_order); ++block_index) if (ba->blocks[block_index].memory == memory1) break;
 
-    forward_block *next = ba->free_blocks[order]->next;
+    forward_memory *next = ba->free_blocks[order]->next;
     free(ba->free_blocks[order]);
     ba->free_blocks[order] = next;
 
-    forward_block *leftmost_free = ba->free_blocks[order - 1];
+    forward_memory *leftmost_free = ba->free_blocks[order - 1];
     
-    forward_block *new_block2 = calloc(1, sizeof(forward_block));
+    forward_memory *new_block2 = calloc(1, sizeof(forward_memory));
     new_block2->memory = memory2;
     new_block2->next = leftmost_free;
 
-    forward_block *new_block1 = calloc(1, sizeof(forward_block));
+    forward_memory *new_block1 = calloc(1, sizeof(forward_memory));
     new_block1->memory = memory1;
     new_block1->next = new_block2;
 
@@ -114,7 +108,7 @@ void* bin_alloc_allocate(binary_allocator *ba, uint64_t bytes_needed) {
             for (; block_index < pow2(ba->max_order); ++block_index) if (ba->blocks[block_index].memory == result) break;
             ba->blocks[block_index].taken = bytes_needed;
 
-            forward_block *next = ba->free_blocks[i]->next;
+            forward_memory *next = ba->free_blocks[i]->next;
             free(ba->free_blocks[i]);
             ba->free_blocks[i] = next;
 
@@ -134,9 +128,9 @@ uint64_t bin_alloc_deallocate(binary_allocator *ba, void *memory) {
 
     ba->blocks[block_index].taken = 0;
 
-    forward_block *leftmost_free = ba->free_blocks[order];
-    
-    forward_block *new_block = calloc(1, sizeof(forward_block));
+    forward_memory *leftmost_free = ba->free_blocks[order];
+
+    forward_memory *new_block = calloc(1, sizeof(forward_memory));
     new_block->memory = memory;
     new_block->next = leftmost_free;
 
@@ -161,7 +155,7 @@ void bin_alloc_print(binary_allocator ba) {
 
     printf("\tfree_blocks = {\n");
     for (uint64_t i = 0; i <= ba.max_order; ++i) {
-        forward_block *rightmost_free = ba.free_blocks[i];
+        forward_memory *rightmost_free = ba.free_blocks[i];
 
         printf("\t\t");
         if (rightmost_free == NULL) {

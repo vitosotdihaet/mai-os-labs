@@ -13,5 +13,8 @@ buddy_allocator: buddy_allocator.c
 shared: shared.c
 	$(CC) $(CFLAGS) -g -c shared.c
 
+test: test.c
+	$(CC) $(CFALGS) -o test.out test.c
+
 clear:
 	rm -f *.out *.o
